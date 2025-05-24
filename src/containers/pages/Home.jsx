@@ -2,17 +2,23 @@ import Layout from "hocs/layout/layout";
 import Headers from "components/Header";
 import Footer from "components/footer";
 import Navbar from "components/Navbar";
-
+import Incentiv from "components/incentive";
 
 function Home() {
   return (
-    <Layout>
-      <Navbar />
+    <div className="min-h-screen flex flex-col">
+      {/* Contenido principal */}
+      <div className="flex-grow">
+        <Layout>
+          <Navbar />
+          <Headers />
+          <Incentiv />
+        </Layout>
+      </div>
 
-        <Headers/>
-
+      {/* Footer al fondo */}
       <Footer />
-    </Layout>
+    </div>
   );
 }
 
