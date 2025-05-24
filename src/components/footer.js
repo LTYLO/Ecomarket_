@@ -30,8 +30,6 @@ function Footer() {
   );
 }
 
-const mapStateToProps = (state) => ({
- 
-});
+const mapStateToProps = (state) => ({});
 
 export default connect(mapStateToProps, {})(Footer);
