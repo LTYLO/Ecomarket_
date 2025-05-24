@@ -17,7 +17,7 @@ function App() {
       {/* Error Display */}
       <Route path='*' element={<Error404/>}/>
       {/* Error Display */}
-      <Route path='/home' element={<Home/>}/>
+      <Route path='/' element={<Home/>}/>
       <Route path='/catalogo' element={<Catalogo />}/>
       <Route path='/vender' element={<Vender/>}/>
       <Route path='/mis_Compras' element={<Mis_Compras/>}/>
