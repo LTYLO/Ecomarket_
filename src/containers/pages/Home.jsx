@@ -1,19 +1,24 @@
+import Layout from "hocs/layout/layout";
+import Headers from "components/Header";
 import Footer from "components/footer";
 import Navbar from "components/Navbar";
-import Layout from "hocs/layout/layout";
+import Incentiv from "components/incentive";
 
 function Home() {
   return (
-    <Layout>
-      <Navbar />
+    <div className="min-h-screen flex flex-col">
+      {/* Contenido principal */}
+      <div className="flex-grow">
+        <Layout>
+          <Navbar />
+          <Headers />
+          <Incentiv />
+        </Layout>
+      </div>
 
-      <main className="flex-grow pt-[64px] px-4">
-        <h1 className="text-2xl font-bold mb-4">Inicio</h1>
-        <p>Aquí va el contenido principal de tu página.</p>
-      </main>
-
+      {/* Footer al fondo */}
       <Footer />
-    </Layout>
+    </div>
   );
 }
 
