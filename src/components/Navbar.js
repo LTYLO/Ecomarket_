@@ -100,20 +100,23 @@ function Navbar() {
             </div>
 
             {/* BOTÓN CARRITO */}
-            <button
-              onClick={() => setShowCart(true)}
-              className="w-10 h-10 bg-white rounded flex justify-center items-center hover:bg-black hover:text-white transition"
-              title="Carrito"
-            >
-              <img src={car} alt="Carrito" className="w-5 h-5" />
-            </button>
+            <div className="flex justify-end w-full md:w-auto mt-3 md:mt-0">
+              <button
+                onClick={() => setShowCart(true)}
+                className="w-10 h-10 bg-white rounded flex justify-center items-center transition"
+                title="Carrito"
+              >
+                <img src={car} alt="Carrito" className="w-5 h-5" />
+              </button>
+            </div>
+
             
           </nav>
 
 
           {/* PANEL LATERAL */}
           {showCart && (
-            <div className="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-white shadow-lg z-50 p-6 animate-slide-in">
+            <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-lg z-50 p-6 animate-slide-in overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Carrito de compras</h2>
                 <button onClick={() => setShowCart(false)} className="text-gray-500 text-lg">✖</button>
