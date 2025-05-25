@@ -5,7 +5,7 @@ from django.urls import path, include
 from .views import EmailTokenObtainPairView
 
 router = DefaultRouter()
-router.register(r'users', UsuarioViewSet)
+router.register(r'', UsuarioViewSet)
 
 urlpatterns = [
     path('token/', EmailTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -20,7 +20,3 @@ from apps.users.serializers import CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
-urlpatterns = [
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-]

@@ -9,10 +9,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
-    def perform_create(self, serializer):
-        password = serializer.validated_data.get('password')
-        serializer.save(password=make_password(password))
-
+    
 
 # apps/users/views.py
 from rest_framework.views import APIView

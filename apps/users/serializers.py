@@ -13,11 +13,13 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = ['id', 'nombre', 'email', 'password', 'telefono', 'direccion']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'is_active': {'default': True}
         }
 
     def create(self, validated_data):
         password = validated_data.pop('password')
+        validated_data['is_active'] = True 
         usuario = Usuario(**validated_data)
         usuario.set_password(password)  # encripta la contraseña
         usuario.save()
