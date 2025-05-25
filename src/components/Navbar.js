@@ -5,17 +5,31 @@ import logo from 'assets/img/logoEcoMarket.png';
 import lupa from 'assets/img/lupa.png';
 import car from 'assets/img/car.jpg';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 function Navbar() {
   const [showCart, setShowCart] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim() !== '') {
+      navigate(`/catalogo?search=${encodeURIComponent(searchTerm)}`);
+      setSearchTerm('');
+      setIsOpen(false); // opcional: cerrar menú móvil
+    }
+  };
+
 
   return (
     <>
       <header className="fixed top-0 left-0 w-full bg-green-400 text-white z-50 shadow-md">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center px-4 py-3">
-          
+
           {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="bg-white rounded w-10 h-10 flex justify-center items-center">
@@ -25,48 +39,53 @@ function Navbar() {
           </div>
 
           {/* Botón hamburguesa (solo en móviles) */}
-        <button
-          className="md:hidden text-white focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <button
+            className="md:hidden text-white focus:outline-none"
+            onClick={() => setIsOpen(!isOpen)}
           >
-            {isOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {isOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
 
 
-        {/* Buscador visible en escritorio y dentro del menú móvil */}
-          <div className={`w-full md:w-auto mt-3 md:mt-0 ${isOpen ? 'block' : 'hidden'} md:block`}>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Busca un producto"
-                className="w-full md:w-[400px] px-4 py-2 rounded-lg text-black"
-              />
-              <button className="absolute right-2 top-2">
-                <img src={lupa} alt="buscar" className="w-5 h-5" />
-              </button>
+          {/* Buscador visible en escritorio y dentro del menú móvil */}
+          <form onSubmit={handleSearch}>
+            <div className={`w-full md:w-auto mt-3 md:mt-0 ${isOpen ? 'block' : 'hidden'} md:block`}>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Busca un producto"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full md:w-[400px] px-4 py-2 rounded-lg text-black"
+                />
+                <button type="submit" className="absolute right-2 top-2">
+                  <img src={lupa} alt="buscar" className="w-5 h-5" />
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
+
 
           {/* Menú */}
           <nav
@@ -110,7 +129,7 @@ function Navbar() {
               </button>
             </div>
 
-            
+
           </nav>
 
 
