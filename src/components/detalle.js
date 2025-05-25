@@ -1,3 +1,5 @@
+import { connect } from 'react-redux';
+
 function Producto() {
   return (
     <section className="bg-white py-10">
@@ -34,4 +36,8 @@ function Producto() {
 }
 
 
-export default Producto;
+const mapStateToProps = (state) => ({
+ 
+});
+
+export default connect(mapStateToProps, {})(Producto);
