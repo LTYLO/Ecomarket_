@@ -1,88 +1,181 @@
-import { connect } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-const SignIn = () => {
-  const handleSubmit = (e) => {
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+const UsuarioForm = ({ usuarioId, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
+    password: '',
+    telefono: '',
+    direccion: '',
+    edad: '',
+  });
+
+  const [mensaje, setMensaje] = useState('');
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (usuarioId) {
+      fetch(`http://localhost:8000/api/users/${usuarioId}/`)
+        .then(res => res.json())
+        .then(data => {
+          setFormData({
+            nombre: data.nombre || '',
+            email: data.email || '',
+            password: '',
+            telefono: data.telefono || '',
+            direccion: data.direccion || '',
+            edad: data.edad || '',
+          });
+        });
+    }
+  }, [usuarioId]);
+
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.log("Formulario enviado");
+    setMensaje('');
+    setError(false);
+
+    const csrfToken = getCookie('csrftoken');
+
+    const url = usuarioId
+      ? `http://localhost:8000/api/users/${usuarioId}/`
+      : 'http://localhost:8000/api/users/';
+    const method = usuarioId ? 'PUT' : 'POST';
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensaje(usuarioId ? 'Usuario actualizado con éxito.' : 'Usuario creado correctamente.');
+        setError(false);
+        if (!usuarioId) {
+          setFormData({
+            nombre: '',
+            email: '',
+            password: '',
+            telefono: '',
+            direccion: '',
+            edad: '',
+          });
+        }
+        if (onSuccess) onSuccess();
+      } else {
+        setMensaje(data.detail || 'Error al enviar el formulario.');
+        setError(true);
+      }
+    } catch (error) {
+      setMensaje('Error de conexión con el servidor.');
+      setError(true);
+    }
   };
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen px-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Sign in to YourApp</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="p-6 max-w-lg mx-auto mt-20 bg-white shadow-xl rounded-lg border"
+    >
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
+        {usuarioId ? 'Editar Cuenta' : 'Crear Cuenta'}
+      </h2>
 
-        <button className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-md mb-4 hover:bg-gray-50">
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google icon"
-            className="w-5 h-5"
-          />
-          <span className="font-medium">Sign in with Google</span>
-        </button>
-
-        <div className="flex items-center my-4">
-          <div className="flex-grow h-px bg-gray-300"></div>
-          <span className="px-3 text-sm text-gray-500">or</span>
-          <div className="flex-grow h-px bg-gray-300"></div>
-        </div>
-
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              Remember me
-            </label>
-            <a href="#" className="text-green-600 hover:underline">
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition"
-          >
-            Sign In
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Don't have an account?
-          <a href="#" className="text-green-600 hover:underline ml-1">
-            Sign up
-          </a>
-        </p>
+      <div className="space-y-4">
+        <input
+          type="text"
+          name="nombre"
+          placeholder="Nombre completo"
+          value={formData.nombre}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="email electrónico"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder={usuarioId ? "Dejar vacío para no cambiar" : "Contraseña"}
+          value={formData.password}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          {...(!usuarioId && { required: true })}
+        />
+        <input
+          type="text"
+          name="telefono"
+          placeholder="Teléfono"
+          value={formData.telefono}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="direccion"
+          placeholder="Dirección"
+          value={formData.direccion}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="number"
+          name="edad"
+          placeholder="Edad"
+          value={formData.edad}
+          onChange={handleChange}
+          min="0"
+          className="w-full p-2 border rounded"
+        />
       </div>
-    </div>
+
+      <button
+        type="submit"
+        className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold p-2 rounded transition"
+      >
+        {usuarioId ? 'Actualizar Cuenta' : 'Crear Cuenta'}
+      </button>
+
+      {mensaje && (
+        <p className={`mt-4 text-center ${error ? 'text-red-500' : 'text-green-600'}`}>
+          {mensaje}
+        </p>
+      )}
+    </form>
   );
 };
-const mapStateToProps = (state) => ({});
 
-
-export default connect(mapStateToProps)(SignIn);
+export default UsuarioForm;

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 const Catalogo = () => {
   const [products, setProducts] = useState([]);
   const location = useLocation();
-
   const search = new URLSearchParams(location.search).get('search');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const url = search
@@ -17,6 +18,17 @@ const Catalogo = () => {
       .then(res => setProducts(res.data))
       .catch(err => console.error('Error al obtener productos:', err));
   }, [search]);
+
+  const handleAddToCart = (product) => {
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: {
+        id: product.id,
+        title: product.title,
+        price: Number(product.price),  
+      },
+    });
+  };
 
   return (
     <div className="p-4">
@@ -29,6 +41,12 @@ const Catalogo = () => {
               <h3 className="text-lg font-bold">{product.title}</h3>
               <p>{product.description}</p>
               <p className="text-green-600 font-semibold">${product.price}</p>
+              <button
+                onClick={() => handleAddToCart(product)}
+                className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
+              >
+                Agregar al carrito
+              </button>
             </div>
           ))
         ) : (

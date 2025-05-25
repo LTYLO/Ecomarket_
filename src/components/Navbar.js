@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import logo from 'assets/img/logoEcoMarket.png';
@@ -6,9 +5,10 @@ import lupa from 'assets/img/lupa.png';
 import car from 'assets/img/car.jpg';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-
-function Navbar() {
+function Navbar({ cartItems, setCartItems }) {
   const [showCart, setShowCart] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +23,29 @@ function Navbar() {
       setIsOpen(false); // opcional: cerrar menú móvil
     }
   };
+  const [userName, setUserName] = useState("Invitado");
 
+  // Si tienes autenticación implementada, aquí puedes obtener el usuario real
+  useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    axios.get('http://localhost:8000/api/users/me/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    })
+      .then(response => {
+        setUserName(response.data.nombre || 'Usuario');
+      })
+      .catch(error => {
+        console.error('Error al obtener el usuario autenticado', error);
+        setUserName('Usuario');
+      });
+  } else {
+    setUserName('Invitado');
+  }
+}, []);
 
   return (
     <>
@@ -132,35 +154,13 @@ function Navbar() {
 
           </nav>
 
-
           {/* PANEL LATERAL */}
-          {showCart && (
-            <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-lg z-50 p-6 animate-slide-in overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Carrito de compras</h2>
-                <button onClick={() => setShowCart(false)} className="text-gray-500 text-lg">✖</button>
-              </div>
-              <div className="text-center text-gray-600">
-                <img src="/static/img/box-empty.png" alt="Carrito vacío" className="w-32 mx-auto mb-4" />
-                <p>No has agregado productos a tu carrito.</p>
-                <a href="#" className="text-blue-500">Volviendo a la vitrina →</a>
-              </div>
-              <div className="absolute bottom-0 left-0 w-full px-6 py-4 border-t">
-                <div className="flex justify-between items-center text-lg">
-                  <span>Subtotal:</span>
-                  <span>$ 0</span>
-                </div>
-                <button disabled className="mt-2 w-full bg-gray-300 text-white py-2 rounded cursor-not-allowed">
-                  Ir a Pagar
-                </button>
-              </div>
-            </div>
-          )}
-
-
-
-
-
+          <CartPanel
+            showCart={showCart}
+            setShowCart={setShowCart}
+            cartItems={cartItems || []}
+            userName={userName}
+          />
 
         </div>
       </header>
@@ -168,6 +168,54 @@ function Navbar() {
   );
 }
 
-const mapStateToProps = (state) => ({});
+
+const CartPanel = ({ showCart, setShowCart, cartItems = [], userName }) => {
+  const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
+
+  return (
+    showCart && (
+      <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-lg z-50 p-6 animate-slide-in overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Carrito de compras de {userName}</h2>
+          <button onClick={() => setShowCart(false)} className="text-gray-500 text-lg">✖</button>
+        </div>
+
+        {cartItems.length === 0 ? (
+          <div className="text-center text-gray-600">
+            <img src="/static/img/box-empty.png" alt="Carrito vacío" className="w-32 mx-auto mb-4" />
+            <p>No has agregado productos a tu carrito.</p>
+          </div>
+        ) : (
+          <ul>
+            {cartItems.map((item, index) => (
+              <li key={index} className="border-b py-2 flex justify-between">
+                <span>{item.title}</span>
+                <span>${Number(item.price).toFixed(2)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="absolute bottom-0 left-0 w-full px-6 py-4 border-t bg-white">
+          <div className="flex justify-between items-center text-lg">
+            <span>Subtotal:</span>
+            <span>${subtotal.toFixed(2)}</span>
+          </div>
+          <button
+            disabled={cartItems.length === 0}
+            className={`mt-2 w-full py-2 rounded text-white ${cartItems.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
+          >
+            Ir a Pagar
+          </button>
+        </div>
+      </div>
+    )
+  );
+};
+
+
+const mapStateToProps = (state) => ({
+  cartItems: state.cart.items,
+});
 
 export default connect(mapStateToProps)(Navbar);

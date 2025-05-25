@@ -14,9 +14,16 @@ import Vender from 'containers/pages/Vender';
 import Mis_Compras from 'containers/pages/Mis_Compras';
 import Sing_Up from 'containers/pages/Sing_Up';
 import Login from 'containers/pages/Login';
+import React, { useState } from 'react';
 
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
+
+  const handleAddToCart = (item) => {
+    setCartItems(prevItems => [...prevItems, item]);
+  };
+
   return (
     <Provider store={store}>
       <Router>

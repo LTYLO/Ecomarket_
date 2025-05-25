@@ -34,6 +34,7 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
+    'apps.users',
     'apps.products'
 ]
 
@@ -155,14 +156,27 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
 }
 
+AUTH_USER_MODEL = 'users.Usuario'
+USERNAME_FIELD = 'email' 
 
 CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST_DEV', default=[])
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS_DEV', default=[])
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+AUTHENTICATION_BACKENDS = [
+    'Ecomarket.authentication.EmailBackend', 
+    'django.contrib.auth.backends.ModelBackend',  
+]
 
 
 

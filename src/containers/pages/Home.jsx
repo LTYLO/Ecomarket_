@@ -9,9 +9,9 @@ function Home() {
       {/* Contenido principal */}
       <div className="flex-grow">
         <Layout>
-          <Headers />
-          <Incentiv />
-          <Insentivo />
+          <Headers/>
+          <Incentiv/>
+          <Insentivo/>
         </Layout>
       </div>
 
