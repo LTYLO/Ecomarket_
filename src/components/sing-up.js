@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Asegúrate de tener react-router-dom instalado
 
 function getCookie(name) {
   let cookieValue = null;
@@ -16,6 +17,8 @@ function getCookie(name) {
 }
 
 const UsuarioForm = ({ usuarioId, onSuccess }) => {
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -27,11 +30,19 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
 
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState(false);
 
   useEffect(() => {
     if (usuarioId) {
+      setLoading(true);
       fetch(`http://localhost:8000/api/users/${usuarioId}/`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
+          return res.json();
+        })
         .then(data => {
           setFormData({
             nombre: data.nombre || '',
@@ -41,9 +52,30 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
             direccion: data.direccion || '',
             edad: data.edad || '',
           });
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error al obtener usuario:', err);
+          setLoading(false);
+          
+          // Verificar si es un error de conexión con el servidor
+          if (err.code === 'ECONNREFUSED' ||
+              err.code === 'ERR_NETWORK' ||
+              err.message.includes('Network Error') ||
+              err.message.includes('fetch') ||
+              !err.response) {
+            console.log('Error de conexión detectado, redirigiendo...');
+            setServerError(true);
+            
+            // Redireccionar después de 3 segundos para mostrar el mensaje de error
+            setTimeout(() => {
+               navigate('/Sing_Up');
+              navigate('/error/500_sing');
+            }, 3000);
+          }
         });
     }
-  }, [usuarioId]);
+  }, [usuarioId, navigate]);
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,6 +85,7 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
     e.preventDefault();
     setMensaje('');
     setError(false);
+    setLoading(true);
 
     const csrfToken = getCookie('csrftoken');
 
@@ -92,11 +125,39 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
         setMensaje(data.detail || 'Error al enviar el formulario.');
         setError(true);
       }
-    } catch (error) {
-      setMensaje('Error de conexión con el servidor.');
-      setError(true);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error al enviar formulario:', err);
+      setLoading(false);
+      
+      // Verificar si es un error de conexión con el servidor
+      if (err.code === 'ECONNREFUSED' ||
+          err.code === 'ERR_NETWORK' ||
+          err.message.includes('Network Error') ||
+          err.message.includes('fetch') ||
+          !err.response) {
+        console.log('Error de conexión detectado, redirigiendo...');
+        setServerError(true);
+        
+        // Redireccionar después de 3 segundos para mostrar el mensaje de error
+        setTimeout(() => {
+          navigate('/error/500_sing');
+        }, 3000);
+      } else {
+        setMensaje('Error de conexión con el servidor.');
+        setError(true);
+      }
     }
   };
+
+  // Mostrar mensaje de error de servidor antes de redireccionar
+    if (serverError) {
+    return (
+     setTimeout(() => {
+            navigate('/error/500_sing'); // Cambia esta ruta por la que necesites
+          }, 1)
+    );
+  }
 
   return (
     <form
@@ -115,7 +176,8 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           value={formData.nombre}
           onChange={handleChange}
           required
-          className="w-full p-2 border rounded"
+          disabled={loading}
+          className="w-full p-2 border rounded disabled:bg-gray-100"
         />
         <input
           type="email"
@@ -124,7 +186,8 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full p-2 border rounded"
+          disabled={loading}
+          className="w-full p-2 border rounded disabled:bg-gray-100"
         />
         <input
           type="password"
@@ -132,7 +195,8 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           placeholder={usuarioId ? "Dejar vacío para no cambiar" : "Contraseña"}
           value={formData.password}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          disabled={loading}
+          className="w-full p-2 border rounded disabled:bg-gray-100"
           {...(!usuarioId && { required: true })}
         />
         <input
@@ -141,7 +205,8 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           placeholder="Teléfono"
           value={formData.telefono}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          disabled={loading}
+          className="w-full p-2 border rounded disabled:bg-gray-100"
         />
         <input
           type="text"
@@ -149,7 +214,8 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           placeholder="Dirección"
           value={formData.direccion}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          disabled={loading}
+          className="w-full p-2 border rounded disabled:bg-gray-100"
         />
         <input
           type="number"
@@ -158,15 +224,24 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           value={formData.edad}
           onChange={handleChange}
           min="0"
-          className="w-full p-2 border rounded"
+          disabled={loading}
+          className="w-full p-2 border rounded disabled:bg-gray-100"
         />
       </div>
 
       <button
         type="submit"
-        className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold p-2 rounded transition"
+        disabled={loading}
+        className="mt-6 w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold p-2 rounded transition flex items-center justify-center"
       >
-        {usuarioId ? 'Actualizar Cuenta' : 'Crear Cuenta'}
+        {loading ? (
+          <>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            {usuarioId ? 'Actualizando...' : 'Creando...'}
+          </>
+        ) : (
+          usuarioId ? 'Actualizar Cuenta' : 'Crear Cuenta'
+        )}
       </button>
 
       {mensaje && (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 const Catalogo = () => {
@@ -8,7 +8,9 @@ const Catalogo = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [serverError, setServerError] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const search = new URLSearchParams(location.search).get('search');
   const dispatch = useDispatch();
 
@@ -50,6 +52,8 @@ const Catalogo = () => {
       : 'http://localhost:8000/api/products/';
 
     setLoading(true);
+    setServerError(false);
+    
     axios.get(url)
       .then(res => {
         console.log('Datos del servidor:', res.data);
@@ -61,8 +65,22 @@ const Catalogo = () => {
       .catch(err => {
         console.error('Error al obtener productos:', err);
         setLoading(false);
+        
+        // Verificar si es un error de conexión con el servidor
+        if (err.code === 'ECONNREFUSED' || 
+            err.code === 'ERR_NETWORK' || 
+            err.message.includes('Network Error') ||
+            !err.response) {
+          console.log('Error de conexión detectado, redirigiendo...');
+          setServerError(true);
+          
+          // Redireccionar después de 3 segundos para mostrar el mensaje de error
+          setTimeout(() => {
+            navigate('/error/500'); // Cambia esta ruta por la que necesites
+          }, 3000);
+        }
       });
-  }, [search]);
+  }, [search, navigate]);
 
   const handleAddToCart = (product, event) => {
     event.stopPropagation(); // Evitar que se abra el modal
@@ -96,6 +114,15 @@ const Catalogo = () => {
     setSelectedProduct(null);
     document.body.style.overflow = 'unset'; // Restaurar scroll del body
   };
+
+  // Pantalla de error de servidor
+  if (serverError) {
+    return (
+     setTimeout(() => {
+            navigate('/error/500'); // Cambia esta ruta por la que necesites
+          }, 1)
+    );
+  }
 
   if (loading) {
     return (

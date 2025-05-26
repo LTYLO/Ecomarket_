@@ -61,9 +61,10 @@ function Error500() {
     setIsRetrying(true);
     
     // Simular un pequeño retraso para mostrar el estado de "reintentando"
+     // Simular un pequeño retraso para mostrar el estado de "reintentando"
     setTimeout(() => {
       // Intentar volver al catálogo
-      navigate('/catalogo');
+      navigate('/registrarse');
       // Si eso no funciona, recargar la página completa
       setTimeout(() => {
         window.location.reload();

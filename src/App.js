@@ -1,5 +1,7 @@
 import Error404 from 'containers/errors/Error404';
 import Error500 from 'containers/errors/Error500'; // Import the new Error500 component
+import Error500_1 from 'containers/errors/Error500_login'; 
+import Error500_2 from 'containers/errors/Error500_sing'; 
 import Home from 'containers/pages/Home';
 import store from './store';
 
@@ -44,6 +46,8 @@ function App() {
             <Route path='/login' element={<Login/>}/>
             {/* Error pages */}
             <Route path="/error/500" element={<Error500 />} />
+            <Route path="/error/500_login" element={<Error500_1 />} />
+            <Route path="/error/500_sing" element={<Error500_2 />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
         </div>
