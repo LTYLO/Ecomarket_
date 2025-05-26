@@ -52,6 +52,9 @@ const Catalogo = () => {
     setLoading(true);
     axios.get(url)
       .then(res => {
+        console.log('Datos del servidor:', res.data);
+        console.log('Estructura del primer producto:', res.data[0]);
+        console.log('Campo image del primer producto:', res.data[0]?.image);
         setProducts(res.data);
         setLoading(false);
       })
@@ -141,9 +144,17 @@ const Catalogo = () => {
                   {/* Imagen del producto */}
                   <div className="relative overflow-hidden">
                     <img
-                      src={`http://localhost:8000/media/product_images/banano.jpg`}
+                      src={product.image}
                       alt={product.title}
                       className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        console.log('Error cargando imagen:', product.image);
+                        console.log('Product data:', product);
+                        e.target.src = 'http://localhost:8000/media/product_images/banano.jpg';
+                      }}
+                      onLoad={() => {
+                        console.log('Imagen cargada exitosamente:', product.image);
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
@@ -211,20 +222,26 @@ const Catalogo = () => {
                 <div className="space-y-4">
                   <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
                     <img
-                      src={`http://localhost:8000/media/product_images/banano.jpg`}
+                      src={selectedProduct.image}
                       alt={selectedProduct.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'http://localhost:8000/media/product_images/banano.jpg';
+                      }}
                     />
                   </div>
 
-                  {/* Imágenes adicionales (placeholder) */}
+                  {/* Imágenes adicionales (usando la misma imagen principal como placeholder) */}
                   <div className="grid grid-cols-4 gap-2">
                     {[1, 2, 3, 4].map((i) => (
                       <div key={i} className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-transparent hover:border-green-500 cursor-pointer transition-all duration-200">
                         <img
-                          src={`http://localhost:8000/media/product_images/banano.jpg`}
+                          src={selectedProduct.image}
                           alt={`${selectedProduct.title} ${i}`}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = 'http://localhost:8000/media/product_images/banano.jpg';
+                          }}
                         />
                       </div>
                     ))}
@@ -267,29 +284,28 @@ const Catalogo = () => {
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium text-gray-700">Calorías:</span>
-                        <span className="text-gray-600 ml-2">{selectedProduct.calories} kcal/100g</span>
+                        <span className="text-gray-600 ml-2">{selectedProduct.calories || 'N/A'} kcal/100g</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-700">Vitamina C:</span>
-                        <span className="text-gray-600 ml-2">{selectedProduct.vitamin_c} mg</span>
+                        <span className="text-gray-600 ml-2">{selectedProduct.vitamin_c || 'N/A'} mg</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-700">Fibra:</span>
-                        <span className="text-gray-600 ml-2">{selectedProduct.fiber} g</span>
+                        <span className="text-gray-600 ml-2">{selectedProduct.fiber || 'N/A'} g</span>
                       </div>
                       <div>
                         <span className="font-medium text-gray-700">Potasio:</span>
-                        <span className="text-gray-600 ml-2">{selectedProduct.potassium} mg</span>
+                        <span className="text-gray-600 ml-2">{selectedProduct.potassium || 'N/A'} mg</span>
                       </div>
                     </div>
                   </div>
-
 
                   {/* Detalles del Producto */}
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Origen:</span>
-                      <span className="font-medium">{selectedProduct.origin}</span>
+                      <span className="font-medium">{selectedProduct.origin || 'Nacional'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Disponibilidad:</span>
@@ -328,12 +344,9 @@ const Catalogo = () => {
             </div>
           </div>
         </div>
-        
-        
-  )
-}
+      )}
 
-<style jsx>{`
+      <style jsx>{`
         @keyframes fade-in {
           from {
             opacity: 0;
@@ -356,7 +369,7 @@ const Catalogo = () => {
           overflow: hidden;
         }
       `}</style>
-    </div >
+    </div>
   );
 };
 
