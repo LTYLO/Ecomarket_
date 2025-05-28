@@ -595,7 +595,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
       `}</style>
     </>
   );
-}
+
 
 const mapStateToProps = (state) => ({
   cartItems: state.cart.items,
