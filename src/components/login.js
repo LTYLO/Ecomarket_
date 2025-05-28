@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import logo from 'assets/img/logoEcoMarket.png';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -72,72 +73,77 @@ const LoginForm = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">{logueado ? 'Bienvenido' : 'Iniciar Sesión'}</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-200 px-4" >
+      <div className="bg-[#0D1424] border border-gray-300 shadow-2xl rounded-2xl p-8 w-full max-w-md">
+        <div className="flex justify-center mb-6">
+          <img src={logo} alt="Logo" className="h-16 w-16 shadow-lg" />
+        </div>
+        <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
+          <h2 className="text-2xl font-bold mb-4">{logueado ? 'Bienvenido' : 'Iniciar Sesión'}</h2>
 
-        {!logueado ? (
-          <>
-            <input
-              type="email"
-              placeholder="Correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className="w-full mb-3 p-2 border border-gray-300 rounded disabled:bg-gray-100"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              className="w-full mb-4 p-2 border border-gray-300 rounded disabled:bg-gray-100"
-              required
-            />
+          {!logueado ? (
+            <>
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                className="w-full mb-3 p-2 border border-gray-300 rounded disabled:bg-gray-100"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+                className="w-full mb-4 p-2 border border-gray-300 rounded disabled:bg-gray-100"
+                required
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-2 rounded flex items-center justify-center"
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Iniciando sesión...
+                  </>
+                ) : (
+                  'Iniciar sesión'
+                )}
+              </button>
+
+              <p className="mt-4 text-center text-sm text-gray-600">
+                ¿No tienes una cuenta?{' '}
+                <NavLink to="/signup" className="text-green-600 hover:underline">
+                  Regístrate
+                </NavLink>
+              </p>
+            </>
+          ) : (
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-2 rounded flex items-center justify-center"
+              type="button"
+              onClick={handleLogout}
+              className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded"
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Iniciando sesión...
-                </>
-              ) : (
-                'Iniciar sesión'
-              )}
+              Cerrar sesión
             </button>
+          )}
 
-            <p className="mt-4 text-center text-sm text-gray-600">
-              ¿No tienes una cuenta?{' '}
-              <NavLink to="/signup" className="text-green-600 hover:underline">
-                Regístrate
-              </NavLink>
+          {mensaje && (
+            <p className={`mt-4 text-center text-sm ${
+              mensaje.includes('Error') || mensaje.includes('error') 
+                ? 'text-red-500' 
+                : 'text-green-600'
+            }`}>
+              {mensaje}
             </p>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded"
-          >
-            Cerrar sesión
-          </button>
-        )}
-
-        {mensaje && (
-          <p className={`mt-4 text-center text-sm ${
-            mensaje.includes('Error') || mensaje.includes('error') 
-              ? 'text-red-500' 
-              : 'text-green-600'
-          }`}>
-            {mensaje}
-          </p>
-        )}
-      </form>
+          )}
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Asegúrate de tener react-router-dom instalado
+import carr4 from 'assets/img/videoframe_4373.png';
 
 function getCookie(name) {
   let cookieValue = null;
@@ -160,96 +161,114 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-6 max-w-lg mx-auto mt-20 bg-white shadow-xl rounded-lg border"
-    >
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
-        {usuarioId ? 'Editar Cuenta' : 'Crear Cuenta'}
-      </h2>
 
-      <div className="space-y-4">
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre completo"
-          value={formData.nombre}
-          onChange={handleChange}
-          required
-          disabled={loading}
-          className="w-full p-2 border rounded disabled:bg-gray-100"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="email electrónico"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          disabled={loading}
-          className="w-full p-2 border rounded disabled:bg-gray-100"
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder={usuarioId ? "Dejar vacío para no cambiar" : "Contraseña"}
-          value={formData.password}
-          onChange={handleChange}
-          disabled={loading}
-          className="w-full p-2 border rounded disabled:bg-gray-100"
-          {...(!usuarioId && { required: true })}
-        />
-        <input
-          type="text"
-          name="telefono"
-          placeholder="Teléfono"
-          value={formData.telefono}
-          onChange={handleChange}
-          disabled={loading}
-          className="w-full p-2 border rounded disabled:bg-gray-100"
-        />
-        <input
-          type="text"
-          name="direccion"
-          placeholder="Dirección"
-          value={formData.direccion}
-          onChange={handleChange}
-          disabled={loading}
-          className="w-full p-2 border rounded disabled:bg-gray-100"
-        />
-        <input
-          type="number"
-          name="edad"
-          placeholder="Edad"
-          value={formData.edad}
-          onChange={handleChange}
-          min="0"
-          disabled={loading}
-          className="w-full p-2 border rounded disabled:bg-gray-100"
-        />
+    <div className="flex justify-center items-center min-h-screen bg-gray-200 px-4 py-20">
+      <div className="flex flex-col md:flex-row items-center bg-[#0D1424] shadow-xl rounded-xl overflow-hidden max-w-4xl w-full">
+        
+        {/* Imagen agrandada */}
+        <div className="hidden md:flex md:w-[48%] items-center justify-center bg-[#0D1424] p-8">
+          <img
+            src={carr4}
+            alt="Imagen decorativa"
+            className="rounded-xl max-h-[520px] object-cover w-full h-auto"
+          />
+        </div>
+
+        {/* Formulario */}
+        <div className="w-full md:w-[52%] p-6 sm:p-10">
+          <h2 className="text-3xl font-bold text-center text-white mb-6">
+            {usuarioId ? 'Editar Cuenta' : 'Crear Cuenta'}
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre completo"
+              value={formData.nombre}
+              onChange={handleChange}
+              required
+              disabled={loading}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Correo electrónico"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              disabled={loading}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder={usuarioId ? 'Dejar en blanco para no cambiar' : 'Contraseña'}
+              value={formData.password}
+              onChange={handleChange}
+              disabled={loading}
+              {...(!usuarioId && { required: true })}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+            />
+            <input
+              type="text"
+              name="direccion"
+              placeholder="Dirección"
+              value={formData.direccion}
+              onChange={handleChange}
+              disabled={loading}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+            />
+
+            {/* Teléfono y edad en la misma fila */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <input
+                type="text"
+                name="telefono"
+                placeholder="Teléfono"
+                value={formData.telefono}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full sm:w-1/2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+              />
+              <input
+                type="number"
+                name="edad"
+                placeholder="Edad"
+                value={formData.edad}
+                onChange={handleChange}
+                min="0"
+                disabled={loading}
+                className="w-full sm:w-1/2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg flex justify-center items-center transition-colors duration-300"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  {usuarioId ? 'Actualizando...' : 'Creando...'}
+                </>
+              ) : (
+                usuarioId ? 'Actualizar Cuenta' : 'Crear Cuenta'
+              )}
+            </button>
+
+            {mensaje && (
+              <p className={`mt-4 text-center font-medium ${error ? 'text-red-500' : 'text-green-600'}`}>
+                {mensaje}
+              </p>
+            )}
+          </form>
+        </div>
       </div>
+    </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="mt-6 w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold p-2 rounded transition flex items-center justify-center"
-      >
-        {loading ? (
-          <>
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-            {usuarioId ? 'Actualizando...' : 'Creando...'}
-          </>
-        ) : (
-          usuarioId ? 'Actualizar Cuenta' : 'Crear Cuenta'
-        )}
-      </button>
-
-      {mensaje && (
-        <p className={`mt-4 text-center ${error ? 'text-red-500' : 'text-green-600'}`}>
-          {mensaje}
-        </p>
-      )}
-    </form>
   );
 };
 
