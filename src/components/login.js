@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Importar el hook de autenticación
+import { useAuth } from './AuthContext'; // Hook de autenticación
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, userName, login, logout } = useAuth(); // Usar el contexto
-  
+  const { isLoggedIn, userName, login, logout } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
@@ -27,15 +27,15 @@ const LoginForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        let finalUserName = 'Usuario'; // Valor por defecto
-        
+        let finalUserName = 'Usuario';
+
         try {
           const userResponse = await fetch('http://localhost:8000/api/users/', {
             headers: {
               Authorization: `Bearer ${data.access}`,
             },
           });
-          
+
           if (userResponse.ok) {
             const userData = await userResponse.json();
             finalUserName = userData.nombre || userData.name || 'Usuario';
@@ -46,55 +46,46 @@ const LoginForm = () => {
           console.warn('Error al obtener datos del usuario:', userError);
         }
 
-        // Usar la función login del contexto en lugar de localStorage directamente
         login(data.access, finalUserName);
-        
         setMensaje('Sesión iniciada correctamente');
-        
-        // Redirigir al home después del login exitoso
+
         setTimeout(() => {
           navigate('/Home');
         }, 1500);
-        
       } else {
         setMensaje(data.detail || 'Error al iniciar sesión');
       }
-      setLoading(false);
     } catch (err) {
       console.error('Error al iniciar sesión:', err);
-      setLoading(false);
-      
-      // Verificar si es un error de conexión con el servidor
-      if (err.code === 'ECONNREFUSED' ||
-          err.code === 'ERR_NETWORK' ||
-          err.message.includes('Network Error') ||
-          err.message.includes('fetch') ||
-          !err.response) {
+
+      if (
+        err.code === 'ECONNREFUSED' ||
+        err.code === 'ERR_NETWORK' ||
+        err.message.includes('Network Error') ||
+        err.message.includes('fetch') ||
+        !err.response
+      ) {
         console.log('Error de conexión detectado, redirigiendo...');
         setServerError(true);
-        
-        // Redireccionar después de 3 segundos para mostrar el mensaje de error
         setTimeout(() => {
           navigate('/error/500_login');
         }, 3000);
       } else {
         setMensaje('Error de conexión con el servidor');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
-    // Usar la función logout del contexto
     logout();
     setMensaje('Sesión cerrada');
-    
-    // Redirigir al home después del logout
     setTimeout(() => {
       navigate('/Home');
     }, 1000);
   };
 
-  // Mostrar mensaje de error de servidor antes de redireccionar
   if (serverError) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -139,9 +130,8 @@ const LoginForm = () => {
               disabled={loading}
               className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-3 rounded-lg flex items-center justify-center transition-colors"
             >
-              Cerrar sesión
+              {loading ? 'Cargando...' : 'Iniciar sesión'}
             </button>
-          )}
 
             <p className="mt-4 text-center text-sm text-gray-600">
               ¿No tienes una cuenta?{' '}
@@ -153,14 +143,10 @@ const LoginForm = () => {
         ) : (
           <div className="text-center">
             <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-green-700 font-medium">
-                Sesión activa
-              </p>
-              <p className="text-sm text-gray-600 mt-1">
-                {userName}
-              </p>
+              <p className="text-green-700 font-medium">Sesión activa</p>
+              <p className="text-sm text-gray-600 mt-1">{userName}</p>
             </div>
-            
+
             <button
               type="button"
               onClick={handleLogout}
@@ -168,9 +154,9 @@ const LoginForm = () => {
             >
               Cerrar sesión
             </button>
-            
-            <NavLink 
-              to="/Home" 
+
+            <NavLink
+              to="/Home"
               className="block w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition-colors text-center"
             >
               Ir al inicio
@@ -179,11 +165,13 @@ const LoginForm = () => {
         )}
 
         {mensaje && (
-          <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${
-            mensaje.includes('Error') || mensaje.includes('error') 
-              ? 'bg-red-50 border border-red-200 text-red-700' 
-              : 'bg-green-50 border border-green-200 text-green-700'
-          }`}>
+          <div
+            className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${
+              mensaje.toLowerCase().includes('error')
+                ? 'bg-red-50 border border-red-200 text-red-700'
+                : 'bg-green-50 border border-green-200 text-green-700'
+            }`}
+          >
             {mensaje}
           </div>
         )}
