@@ -12,9 +12,9 @@ function Headers() {
       <div className="lg:w-1/2 w-full text-center lg:text-left">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
 
-          Bienvenido al <span className="text-green-600 inline-block min-w-[120px]">
+          Vive la <span className="text-green-600 inline-block min-w-[120px]">
             <Typewriter
-              words={[' Pasado', ' Presente', ' Futuro']}
+              words={[' Evolución', ' Innovación', ' Transformación']}
               loop={0}
               cursor
               cursorStyle='_'
@@ -24,7 +24,7 @@ function Headers() {
             //onLoopDone={handleDone}
             //onType={handleType}
             />
-          </span> de la <span className="text-green-600">Agricultura</span>
+          </span> que está cambiando <span className="text-green-600">Agricultura</span>
 
         </h1>
         <p className="text-gray-600 text-lg mb-6">

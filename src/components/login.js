@@ -139,15 +139,9 @@ const LoginForm = () => {
               disabled={loading}
               className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-3 rounded-lg flex items-center justify-center transition-colors"
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Iniciando sesión...
-                </>
-              ) : (
-                'Iniciar sesión'
-              )}
+              Cerrar sesión
             </button>
+          )}
 
             <p className="mt-4 text-center text-sm text-gray-600">
               ¿No tienes una cuenta?{' '}
