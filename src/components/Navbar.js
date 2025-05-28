@@ -20,6 +20,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
   // Usar el contexto de autenticación
   const { isLoggedIn, userName, logout } = useAuth();
   
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -35,6 +36,9 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
   const handleLogout = () => {
     logout();
     navigate('/Home');
+      setIsOpen(false);
+      setShowMobileSearch(false);
+    }
   };
 
   // Efecto de scroll para cambiar la apariencia del navbar
@@ -48,11 +52,28 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
 
   // Cerrar menú al hacer click fuera
   useEffect(() => {
-    const handleClickOutside = () => {
-      if (isOpen) setIsOpen(false);
+    const handleClickOutside = (e) => {
+      if (isOpen && !e.target.closest('.mobile-menu-container')) {
+        setIsOpen(false);
+      }
+      if (showMobileSearch && !e.target.closest('.mobile-search-container')) {
+        setShowMobileSearch(false);
+      }
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
+  }, [isOpen, showMobileSearch]);
+
+  // Prevenir scroll del body cuando el menú móvil está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   // Items del menú principal (filtrados según el estado de login)
@@ -84,40 +105,116 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
           transition-all duration-500 ease-in-out
           ${isScrolled
             ? 'bg-green-500/95 backdrop-blur-md shadow-2xl py-2'
-            : 'bg-green-400 shadow-md py-2'
+            : 'bg-green-400 shadow-md py-2 sm:py-3'
           }
         `}
       >
-        <div className="max-w-7x1 mx-auto flex items-center justify-between px-4 lg:px-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-3 sm:px-4 lg:px-6">
 
-          {/* Logo */}
-          <div className="flex items-center gap-3 group">
-            <div className="bg-white rounded w-8 h-8 flex justify-center items-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+          {/* Logo - Mejorado para móviles */}
+          <div className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+            <div className="bg-white rounded w-7 h-7 sm:w-8 sm:h-8 flex justify-center items-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
               <img
                 src={logo}
                 alt="logo"
-                className="h-5 w-5 transition-all duration-300"
+                className="h-4 w-4 sm:h-5 sm:w-5 transition-all duration-300"
               />
             </div>
-            <span className="text-sm md:text-base lg:text-xl font-bold text-white">
-              {' '}
-              <span className="text-white-600 inline-block min-w-[120px]">
+            <span className="text-xs sm:text-sm md:text-base lg:text-xl font-bold text-white">
+              <span className="text-white-600 inline-block min-w-[80px] sm:min-w-[120px]">
                 <Typewriter
-                  words={[ ' ECOMARKET']}
+                  words={[' ECOMARKET']}
                   loop={0}
                   cursor
                   cursorStyle="_"
                   typeSpeed={70}
-                  deleteSpeed={50}
+                  deleteSpeed={350}
                   delaySpeed={1000}
                 />
-              </span>{' '}
+              </span>
             </span>
           </div>
 
-          {/* Botón hamburguesa */}
+          {/* Barra de búsqueda móvil independiente */}
+          <div className="sm:hidden flex items-center gap-2">
+            <button
+              onClick={() => setShowMobileSearch(!showMobileSearch)}
+              className="p-2 rounded-lg hover:bg-green-500/30 transition-all duration-300"
+            >
+              <img src={lupa} alt="buscar" className="w-5 h-5" />
+            </button>
+            
+            {/* Carrito móvil */}
+            <div className="relative">
+              <button
+                onClick={() => setShowCart(true)}
+                className="
+                  w-10 h-10 bg-white/90 rounded-lg 
+                  flex justify-center items-center 
+                  hover:bg-white hover:scale-105
+                  transition-all duration-300 
+                  shadow-md
+                "
+              >
+                <svg
+                  className="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5.5M7 13l2.5 5.5m0 0L17 21M9.5 18.5L17 21m0 0h2"
+                  />
+                </svg>
+              </button>
+              {cartItems && cartItems.length > 0 && (
+                <div className="
+                  absolute -top-1 -right-1 
+                  bg-red-500 text-white text-xs font-bold
+                  rounded-full min-w-[18px] h-[18px] 
+                  flex items-center justify-center px-1
+                  border-2 border-white shadow-lg 
+                  animate-pulse
+                ">
+                  {cartItems.length > 99 ? '99+' : cartItems.length}
+                </div>
+              )}
+            </div>
+
+            {/* Botón hamburguesa */}
+            <button
+              className="text-white focus:outline-none p-2 rounded-lg hover:bg-green-500/30 transition-all duration-300 mobile-menu-container"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(!isOpen);
+              }}
+            >
+              <div className="relative w-6 h-6">
+                <span
+                  className={`absolute h-0.5 w-6 bg-white rounded-full transition-all duration-300 ${
+                    isOpen ? 'rotate-45 top-3' : 'top-1'
+                  }`}
+                />
+                <span
+                  className={`absolute h-0.5 w-6 bg-white rounded-full top-3 transition-all duration-300 ${
+                    isOpen ? 'opacity-0' : 'opacity-100'
+                  }`}
+                />
+                <span
+                  className={`absolute h-0.5 w-6 bg-white rounded-full transition-all duration-300 ${
+                    isOpen ? '-rotate-45 top-3' : 'top-5'
+                  }`}
+                />
+              </div>
+            </button>
+          </div>
+
+          {/* Botón hamburguesa para tablets */}
           <button
-            className="lg:hidden text-white focus:outline-none p-2 rounded-lg hover:bg-green-500/30 transition-all duration-300"
+            className="hidden sm:block lg:hidden text-white focus:outline-none p-2 rounded-lg hover:bg-green-500/30 transition-all duration-300 mobile-menu-container"
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(!isOpen);
@@ -125,21 +222,24 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
           >
             <div className="relative w-6 h-6">
               <span
-                className={`absolute h-0.5 w-6 bg-white rounded-full transition-all duration-300 ${isOpen ? 'rotate-45 top-3' : 'top-1'
-                  }`}
+                className={`absolute h-0.5 w-6 bg-white rounded-full transition-all duration-300 ${
+                  isOpen ? 'rotate-45 top-3' : 'top-1'
+                }`}
               />
               <span
-                className={`absolute h-0.5 w-6 bg-white rounded-full top-3 transition-all duration-300 ${isOpen ? 'opacity-0' : 'opacity-100'
-                  }`}
+                className={`absolute h-0.5 w-6 bg-white rounded-full top-3 transition-all duration-300 ${
+                  isOpen ? 'opacity-0' : 'opacity-100'
+                }`}
               />
               <span
-                className={`absolute h-0.5 w-6 bg-white rounded-full transition-all duration-300 ${isOpen ? '-rotate-45 top-3' : 'top-5'
-                  }`}
+                className={`absolute h-0.5 w-6 bg-white rounded-full transition-all duration-300 ${
+                  isOpen ? '-rotate-45 top-3' : 'top-5'
+                }`}
               />
             </div>
           </button>
 
-          {/* Buscador - centrado */}
+          {/* Buscador desktop - centrado */}
           <div className="hidden lg:flex flex-1 justify-center px-8">
             <form onSubmit={handleSearch} className="w-full max-w-md">
               <div className="relative group">
@@ -172,83 +272,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
             </form>
           </div>
 
-          {/* Menú móvil */}
-          {isOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-green-400 z-50 animate-fade-in-down shadow-lg">
-              <div className="flex flex-col items-start px-4 py-3 gap-3">
-                {getMenuItems().map(({ to, label }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    onClick={() => setIsOpen(false)}
-                    className="
-            text-white text-[18px] w-full
-            px-2 py-1 rounded hover:bg-green-600
-            transition-all duration-300
-          "
-                  >
-                    {label}
-                  </NavLink>
-                ))}
-
-                {/* Botón de login/logout en móvil */}
-                {isLoggedIn ? (
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsOpen(false);
-                    }}
-                    className="
-                      bg-red-500 text-white px-3 py-1 rounded 
-                      hover:bg-red-600 transition text-[16px] font-bold
-                      w-full text-left
-                    "
-                  >
-                    Cerrar sesión
-                  </button>
-                ) : (
-                  <NavLink
-                    to="/login"
-                    onClick={() => setIsOpen(false)}
-                    className="
-                      bg-white text-green-700 px-3 py-1 rounded 
-                      hover:bg-black hover:text-white transition text-[16px] font-bold
-                      w-full text-center
-                    "
-                  >
-                    Ingresa
-                  </NavLink>
-                )}
-
-                {/* Buscador en versión móvil */}
-                <form onSubmit={handleSearch} className="w-full mt-2">
-                  <div className="relative w-full">
-                    <input
-                      type="text"
-                      placeholder="Busca un producto"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="
-              w-full px-4 py-2 rounded-lg text-gray-800 
-              border-2 border-transparent
-              focus:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-200
-              transition-all duration-300 shadow-md
-              placeholder:text-gray-500
-            "
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                    >
-                      <img src={lupa} alt="buscar" className="w-5 h-5" />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {/* Menú horizontal */}
+          {/* Menú horizontal desktop */}
           <nav className="hidden lg:flex items-center gap-6">
             {getMenuItems().map(({ to, label }) => (
               <NavLink
@@ -271,32 +295,18 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
               </NavLink>
             ))}
 
-            {/* Botón de login/logout */}
-            {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="
-                  bg-red-500 text-white px-3 py-1 rounded 
-                  hover:bg-red-600 hover:scale-105 transition-all duration-300 
-                  text-[16px] font-bold ml-2 shadow-md hover:shadow-lg
-                "
-              >
-                Cerrar sesión
-              </button>
-            ) : (
-              <NavLink
-                to="/login"
-                className="
-                  registra bg-white text-green-700 px-3 py-1 rounded 
-                  hover:bg-black hover:text-white transition text-[16px] font-bold
-                  ml-2
-                "
-              >
-                Ingresa
-              </NavLink>
-            )}
+            <NavLink
+              to="/login"
+              className="
+                bg-white text-green-700 px-3 py-1 rounded 
+                hover:bg-black hover:text-white transition text-[16px] font-bold
+                ml-2
+              "
+            >
+              Ingresa
+            </NavLink>
 
-            {/* BOTÓN CARRITO */}
+            {/* Carrito desktop */}
             <div className="relative group ml-2">
               <button
                 onClick={() => setShowCart(true)}
@@ -333,14 +343,157 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
                   border-2 border-white shadow-lg 
                   animate-pulse
                 ">
-                  <span>
-                    {cartItems.length > 99 ? '99+' : cartItems.length}
-                  </span>
+                  {cartItems.length > 99 ? '99+' : cartItems.length}
                 </div>
               )}
             </div>
           </nav>
         </div>
+
+        {/* Barra de búsqueda móvil expandible */}
+        {showMobileSearch && (
+          <div className="sm:hidden bg-green-500/95 backdrop-blur-md border-t border-green-300/20 mobile-search-container">
+            <div className="px-3 py-3">
+              <form onSubmit={handleSearch} className="w-full">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Busca un producto"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="
+                      w-full px-4 py-3 rounded-lg text-gray-800 
+                      border-2 border-transparent
+                      focus:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-200
+                      transition-all duration-300 shadow-lg
+                      placeholder:text-gray-500 text-base
+                    "
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1"
+                  >
+                    <img src={lupa} alt="buscar" className="w-5 h-5" />
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Menú móvil mejorado */}
+        {isOpen && (
+          <div className="lg:hidden absolute top-full left-0 w-full bg-green-500/98 backdrop-blur-md z-50 animate-fade-in-down shadow-2xl border-t border-green-300/20 mobile-menu-container">
+            <div className="max-h-[calc(100vh-80px)] overflow-y-auto">
+              
+              {/* Buscador para tablets */}
+              <div className="hidden sm:block px-4 py-4 border-b border-green-300/20">
+                <form onSubmit={handleSearch}>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Busca un producto"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="
+                        w-full px-4 py-3 rounded-lg text-gray-800 
+                        border-2 border-transparent
+                        focus:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-200
+                        transition-all duration-300 shadow-md
+                        placeholder:text-gray-500
+                      "
+                    />
+                    <button
+                      type="submit"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1"
+                    >
+                      <img src={lupa} alt="buscar" className="w-5 h-5" />
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Enlaces de navegación */}
+              <div className="flex flex-col px-4 py-2">
+                {[
+                  { to: "/Home", label: " Inicio" },
+                  { to: "/catalogo", label: " Catálogo" },
+                  { to: "/vender", label: "Vender" },
+                  { to: "/mis_Compras", label: " Mis compras" },
+                  { to: "/registrarse", label: " Crear cuenta" },
+                ].map(({ to, label }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    onClick={() => setIsOpen(false)}
+                    className={({ isActive }) =>
+                      `
+                        text-white text-base sm:text-lg font-medium
+                        px-4 py-4 rounded-lg mb-1
+                        transition-all duration-300
+                        hover:bg-green-600/50 hover:translate-x-2
+                        active:scale-95
+                        border-l-4 border-transparent hover:border-white
+                        ${isActive ? 'bg-green-600/70 border-white text-green-100' : ''}
+                      `
+                    }
+                  >
+                    {label}
+                  </NavLink>
+                ))}
+
+                {/* Botón de login destacado */}
+                <div className="mt-4 pt-4 border-t border-green-300/20">
+                  <NavLink
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="
+                      block w-full text-center
+                      bg-white text-green-700 font-bold
+                      px-6 py-4 rounded-lg text-base sm:text-lg
+                      hover:bg-green-100 hover:shadow-lg
+                      transition-all duration-300
+                      active:scale-95
+                    "
+                  >
+                    Ingresar
+                  </NavLink>
+                </div>
+
+                {/* Carrito para tablets */}
+                <div className="hidden sm:block mt-4">
+                  <button
+                    onClick={() => {
+                      setShowCart(true);
+                      setIsOpen(false);
+                    }}
+                    className="
+                      flex items-center justify-between w-full
+                      text-white font-medium px-4 py-4 rounded-lg
+                      hover:bg-green-600/50 transition-all duration-300
+                      border-l-4 border-transparent hover:border-white
+                    "
+                  >
+                    <span className="text-base sm:text-lg">🛒 Carrito</span>
+                    {cartItems && cartItems.length > 0 && (
+                      <div className="bg-red-500 text-white text-sm font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-2">
+                        {cartItems.length > 99 ? '99+' : cartItems.length}
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Información adicional */}
+              <div className="px-4 py-4 border-t border-green-300/20 bg-green-600/30">
+                <p className="text-green-100 text-sm text-center">
+                  ¡Bienvenido a EcoMarket! 🌱
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Barra de progreso de scroll */}
         <div
@@ -351,15 +504,18 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
         />
       </header>
 
-      {/* Overlay para cerrar menú en móvil */}
-      {isOpen && (
+      {/* Overlay mejorado */}
+      {(isOpen || showMobileSearch) && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
-          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
+          onClick={() => {
+            setIsOpen(false);
+            setShowMobileSearch(false);
+          }}
         />
       )}
 
-      {/* COMPONENTE DEL CARRITO */}
+      {/* Componente del carrito */}
       <CartPanel
         showCart={showCart}
         setShowCart={setShowCart}
@@ -368,7 +524,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
         removeFromCart={removeFromCart}
       />
 
-      {/* Estilos CSS adicionales para animaciones */}
+      {/* Estilos CSS mejorados */}
       <style jsx>{`
         @keyframes fade-in-down {
           from {
@@ -387,17 +543,53 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
         }
         
         .animate-fade-in-down {
-          animation: fade-in-down 0.3s ease-out forwards;
+          animation: fade-in-down 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
         .animate-fade-in {
-          animation: fade-in 0.2s ease-out forwards;
+          animation: fade-in 0.3s ease-out forwards;
         }
         
-        /* Efecto parallax sutil */
-        @media (min-width: 1024px) {
-          header {
-            transform: translateZ(0);
+        /* Scroll suave en el menú móvil */
+        .max-h-[calc(100vh-80px)] {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+        
+        .max-h-[calc(100vh-80px)]::-webkit-scrollbar {
+          width: 4px;
+        }
+        
+        .max-h-[calc(100vh-80px)]::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        .max-h-[calc(100vh-80px)]::-webkit-scrollbar-thumb {
+          background-color: rgba(255, 255, 255, 0.3);
+          border-radius: 2px;
+        }
+        
+        /* Mejoras para dispositivos táctiles */
+        @media (max-width: 640px) {
+          .mobile-menu-container a,
+          .mobile-menu-container button {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+          }
+        }
+        
+        /* Animación de hover mejorada */
+        @media (hover: hover) {
+          .hover\\:translate-x-2:hover {
+            transform: translateX(8px);
+          }
+        }
+        
+        /* Prevenir zoom en inputs en iOS */
+        @media screen and (max-width: 640px) {
+          input[type="text"] {
+            font-size: 16px;
           }
         }
       `}</style>
