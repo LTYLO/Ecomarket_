@@ -4,7 +4,7 @@ import Error500_1 from 'containers/errors/Error500_login';
 import Error500_2 from 'containers/errors/Error500_sing'; 
 import Home from 'containers/pages/Home';
 import store from './store';
-
+import { AuthProvider } from 'components/AuthContext';
 import Footer from "components/footer";
 import Navbar from "components/Navbar";
 import Detalle from 'components/detalle';
@@ -28,6 +28,7 @@ function App() {
   };
 
   return (
+    <AuthProvider>
     <Provider store={store}>
       <Router>
         {/* Siempre visibles */}
@@ -56,6 +57,7 @@ function App() {
         <Footer />
       </Router>
     </Provider>
+    </AuthProvider>
   );
 }
 

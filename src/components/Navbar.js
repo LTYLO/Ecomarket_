@@ -8,14 +8,18 @@ import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Typewriter } from 'react-simple-typewriter';
-import CartPanel from './car'; // Importar el componente del carrito
+import CartPanel from './car';
+import { useAuth } from './AuthContext'; // Importar el hook de autenticación
 
 function Navbar({ cartItems, setCartItems, removeFromCart }) {
   const [showCart, setShowCart] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [userName, setUserName] = useState("Invitado");
   const [isScrolled, setIsScrolled] = useState(false);
+  
+  // Usar el contexto de autenticación
+  const { isLoggedIn, userName, logout } = useAuth();
+  
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -23,8 +27,14 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
     if (searchTerm.trim() !== '') {
       navigate(`/catalogo?search=${encodeURIComponent(searchTerm)}`);
       setSearchTerm('');
-      setIsOpen(false); // cerrar menú móvil
+      setIsOpen(false);
     }
+  };
+
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    logout();
+    navigate('/Home');
   };
 
   // Efecto de scroll para cambiar la apariencia del navbar
@@ -36,8 +46,6 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
-
   // Cerrar menú al hacer click fuera
   useEffect(() => {
     const handleClickOutside = () => {
@@ -46,6 +54,27 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isOpen]);
+
+  // Items del menú principal (filtrados según el estado de login)
+  const getMenuItems = () => {
+    const baseItems = [
+      { to: "/Home", label: "Inicio" },
+      { to: "/catalogo", label: "Catálogo" },
+    ];
+
+    // Solo mostrar "Vender" si está logueado
+    if (isLoggedIn) {
+      baseItems.push({ to: "/vender", label: "Vender" });
+      baseItems.push({ to: "/mis_Compras", label: "Mis compras" });
+    }
+
+    // Solo mostrar "Crear cuenta" si NO está logueado
+    if (!isLoggedIn) {
+      baseItems.push({ to: "/registrarse", label: "Crear cuenta" });
+    }
+
+    return baseItems;
+  };
 
   return (
     <>
@@ -83,9 +112,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
                   delaySpeed={1000}
                 />
               </span>{' '}
-             
             </span>
-
           </div>
 
           {/* Botón hamburguesa */}
@@ -149,18 +176,11 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
           {isOpen && (
             <div className="lg:hidden absolute top-full left-0 w-full bg-green-400 z-50 animate-fade-in-down shadow-lg">
               <div className="flex flex-col items-start px-4 py-3 gap-3">
-                {[
-                  { to: "/Home", label: "Inicio" },
-                  { to: "/catalogo", label: "Catálogo" },
-                  { to: "/vender", label: "Vender" },
-                  { to: "/mis_Compras", label: "Mis compras" },
-                  { to: "/registrarse", label: "Crear cuenta" },
-                  { to: "/login", label: "Ingresa" },
-                ].map(({ to, label }) => (
+                {getMenuItems().map(({ to, label }) => (
                   <NavLink
                     key={to}
                     to={to}
-                    onClick={() => setIsOpen(false)} // cerrar menú al hacer click
+                    onClick={() => setIsOpen(false)}
                     className="
             text-white text-[18px] w-full
             px-2 py-1 rounded hover:bg-green-600
@@ -170,6 +190,35 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
                     {label}
                   </NavLink>
                 ))}
+
+                {/* Botón de login/logout en móvil */}
+                {isLoggedIn ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="
+                      bg-red-500 text-white px-3 py-1 rounded 
+                      hover:bg-red-600 transition text-[16px] font-bold
+                      w-full text-left
+                    "
+                  >
+                    Cerrar sesión
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="
+                      bg-white text-green-700 px-3 py-1 rounded 
+                      hover:bg-black hover:text-white transition text-[16px] font-bold
+                      w-full text-center
+                    "
+                  >
+                    Ingresa
+                  </NavLink>
+                )}
 
                 {/* Buscador en versión móvil */}
                 <form onSubmit={handleSearch} className="w-full mt-2">
@@ -199,16 +248,9 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
             </div>
           )}
 
-
           {/* Menú horizontal */}
           <nav className="hidden lg:flex items-center gap-6">
-            {[
-              { to: "/Home", label: "Inicio" },
-              { to: "/catalogo", label: "Catálogo" },
-              { to: "/vender", label: "Vender" },
-              { to: "/mis_Compras", label: "Mis compras" },
-              { to: "/registrarse", label: "Crear cuenta" },
-            ].map(({ to, label }) => (
+            {getMenuItems().map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -229,16 +271,30 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
               </NavLink>
             ))}
 
-            <NavLink
-              to="/login"
-              className="
-                registra bg-white text-green-700 px-3 py-1 rounded 
-                hover:bg-black hover:text-white transition text-[16px] font-bold
-                ml-2
-              "
-            >
-              Ingresa
-            </NavLink>
+            {/* Botón de login/logout */}
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="
+                  bg-red-500 text-white px-3 py-1 rounded 
+                  hover:bg-red-600 hover:scale-105 transition-all duration-300 
+                  text-[16px] font-bold ml-2 shadow-md hover:shadow-lg
+                "
+              >
+                Cerrar sesión
+              </button>
+            ) : (
+              <NavLink
+                to="/login"
+                className="
+                  registra bg-white text-green-700 px-3 py-1 rounded 
+                  hover:bg-black hover:text-white transition text-[16px] font-bold
+                  ml-2
+                "
+              >
+                Ingresa
+              </NavLink>
+            )}
 
             {/* BOTÓN CARRITO */}
             <div className="relative group ml-2">
