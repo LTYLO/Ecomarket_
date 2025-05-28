@@ -95,6 +95,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
     return baseItems;
   };
 
+  
   return (
     <>
       <header
@@ -110,12 +111,14 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
         <div className="max-w-7xl mx-auto flex items-center justify-between px-3 sm:px-4 lg:px-6">
 
           {/* Logo - Mejorado para móviles */}
-          <div className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
-            <div className="bg-white rounded w-7 h-7 sm:w-8 sm:h-8 flex justify-center items-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+          <div className="flex items-center gap-2 sm:gap-3 group flex-shrink-0" onClick={() => navigate('/Home')}>
+            <div  className="bg-white rounded w-7 h-7 sm:w-8 sm:h-8 flex justify-center items-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+               
               <img
                 src={logo}
                 alt="logo"
                 className="h-4 w-4 sm:h-5 sm:w-5 transition-all duration-300"
+                
               />
             </div>
             <span className="text-xs sm:text-sm md:text-base lg:text-xl font-bold text-white">
@@ -323,16 +326,44 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
                 Cerrar sesión
               </button>
             ) : (
-              <NavLink
-                to="/login"
-                className="
-                  bg-white text-green-700 px-3 py-1 rounded 
-                  hover:bg-black hover:text-white transition text-[16px] font-bold
-                  ml-2
-                "
-              >
-                Ingresa
-              </NavLink>
+             <NavLink
+  to="/login"
+  className="
+    group relative overflow-hidden
+    bg-white/90 backdrop-blur-sm
+    text-emerald-700 font-semibold text-[16px]
+    px-4 py-2 ml-2 rounded-lg
+    border border-emerald-200/50
+    hover:bg-emerald-600 hover:text-white
+    hover:border-emerald-600
+    hover:shadow-lg hover:shadow-emerald-200/40
+    hover:-translate-y-0.5
+    focus:outline-none focus:ring-2 focus:ring-emerald-300/50 focus:ring-offset-1
+    active:translate-y-0 active:scale-[0.98]
+    transition-all duration-300 ease-out
+    before:absolute before:inset-0 
+    before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent
+    before:translate-x-[-100%] before:transition-transform before:duration-500
+    hover:before:translate-x-[100%]
+  "
+>
+  <span className="relative z-10 flex items-center gap-1.5">
+    <svg 
+      className="w-4 h-4 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+    >
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        strokeWidth={2} 
+        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" 
+      />
+    </svg>
+    Ingresa
+  </span>
+</NavLink>  
             )}
 
             {/* Carrito desktop */}
@@ -513,15 +544,42 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
                       to="/login"
                       onClick={() => setIsOpen(false)}
                       className="
-                        block w-full text-center
-                        bg-white text-green-700 font-bold
-                        px-6 py-4 rounded-lg text-base sm:text-lg
-                        hover:bg-green-100 hover:shadow-lg
-                        transition-all duration-300
-                        active:scale-95
-                      "
+    group relative block w-full text-center overflow-hidden
+    bg-gradient-to-r from-emerald-50 to-green-50
+    border border-emerald-200/60
+    text-emerald-700 font-semibold
+    px-6 py-4 rounded-xl text-base sm:text-lg
+    backdrop-blur-sm
+    hover:from-emerald-100 hover:to-green-100
+    hover:border-emerald-300/80
+    hover:shadow-lg hover:shadow-emerald-100/50
+    hover:text-emerald-800
+    hover:-translate-y-0.5
+    focus:outline-none focus:ring-2 focus:ring-emerald-300/50 focus:ring-offset-2
+    active:translate-y-0 active:scale-[0.98]
+    transition-all duration-300 ease-in-out
+    before:absolute before:inset-0 
+    before:bg-gradient-to-r before:from-emerald-200/0 before:via-emerald-200/20 before:to-emerald-200/0
+    before:translate-x-[-100%] before:transition-transform before:duration-700
+    hover:before:translate-x-[100%]
+  "
                     >
-                      Ingresar
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        <svg
+                          className="w-5 h-5 transition-transform duration-300 group-hover:scale-110"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                          />
+                        </svg>
+                        Ingresar
+                      </span>
                     </NavLink>
                   )}
                 </div>

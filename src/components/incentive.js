@@ -1,83 +1,136 @@
 import { connect } from 'react-redux';
-
+import { useState, useEffect } from 'react';
 
 function Incentiv() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-white py-20 sm:py-32">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-green-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{animationDelay: '2s'}}></div>
+      </div>
 
-    <section className="bg-white py-4 sm:py-6 mb-12">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-green-600">Rapido y Seguro</h2>
-          <p className="mt-2 text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-            Todo lo que necesitas esta aqui
-          </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            Nuestra plataforma nos da la opcion de mejorar la experiencia de los clientes con la agricultura y un mejor ambiente para interactuar con la tierra
+        {/* Header Section */}
+        <div className={`mx-auto max-w-3xl text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-50 border border-green-200 mb-6 transition-all duration-300 hover:bg-green-100 hover:scale-105">
+            <span className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></span>
+            <span className="text-sm font-medium text-green-700">Rápido y Seguro</span>
+          </div>
+          
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight text-gray-900 mb-8">
+            Todo lo que
+            <span className="block bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent font-normal">
+              necesitas está aquí
+            </span>
+          </h1>
+          
+          <p className="text-xl leading-relaxed text-gray-600 max-w-2xl mx-auto">
+            Nuestra plataforma revoluciona la experiencia agrícola, creando un puente entre los agricultores y la tecnología para un futuro más sostenible.
           </p>
         </div>
 
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+        {/* Features Grid */}
+        <div className="mx-auto mt-24 max-w-5xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             {features.map((feature, index) => (
-              <div key={index} className="relative pl-16">
-                <dt className="text-base font-semibold leading-7 text-gray-900">
-                  <div className="absolute top-0 left-0 flex h-10 w-10 items-center justify-center rounded-lg bg-green-600">
-                    {feature.icon}
-                  </div>
-                  {feature.title}
-                </dt>
-                <dd className="mt-2 text-base leading-7 text-gray-600">
-                  {feature.description}
-                </dd>
-              </div>
+              <FeatureCard 
+                key={index} 
+                feature={feature} 
+                index={index}
+                isVisible={isVisible}
+              />
             ))}
-          </dl>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+function FeatureCard({ feature, index, isVisible }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div 
+      className={`group relative transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+      style={{ transitionDelay: `${index * 150}ms` }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative p-8 rounded-3xl bg-white/70 backdrop-blur-sm border border-gray-200/50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+        {/* Animated background gradient */}
+        <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-100' : ''}`}></div>
+        
+        {/* Icon container */}
+        <div className="relative flex items-center justify-center w-16 h-16 mb-6">
+          <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg transition-all duration-500 ${isHovered ? 'scale-110 rotate-3' : ''}`}></div>
+          <div className="relative z-10 transition-transform duration-500 hover:scale-110">
+            {feature.icon}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="relative">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 transition-colors duration-300 group-hover:text-green-700">
+            {feature.title}
+          </h3>
+          <p className="text-gray-600 leading-relaxed transition-colors duration-300 group-hover:text-gray-700">
+            {feature.description}
+          </p>
+        </div>
+
+        {/* Decorative corner accent */}
+        <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-transparent rounded-full -mr-10 -mt-10 transition-all duration-500 ${isHovered ? 'scale-150 opacity-100' : 'scale-100 opacity-50'}`}></div>
+      </div>
+    </div>
+  );
+}
+
 const features = [
   {
     title: "Conectividad",
-    description: "Mejora la conexion con el campo de los agricultures y da una oportunidad de desarrollo a en los negocios.",
+    description: "Mejora la conexión con el campo de los agricultores y ofrece oportunidades de desarrollo en los negocios rurales.",
     icon: (
-      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+      <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
       </svg>
     ),
   },
   {
     title: "Certeza",
-    description: "Se confia plenamente en la calidad de nuestros productos y en sus creadores que las proveen a su mesa.",
+    description: "Confianza plena en la calidad de nuestros productos y en los creadores que los llevan a su mesa.",
     icon: (
-      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+      <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
       </svg>
     ),
   },
   {
     title: "Simples pasos",
-    description: "Busca que los usuarios puedan completar tareas básicas sin requerir asistencia externa y mejorar su experiencia.",
+    description: "Permite a los usuarios completar tareas básicas sin asistencia externa, mejorando significativamente su experiencia.",
     icon: (
-      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5 10.5 6.75L17.25 13.5" />
       </svg>
     ),
   },
   {
     title: "Seguridad",
-    description: "Tiene la confianza de que su imformación sera unica y exclusivamente para que sus productos lleguen a salvo donde quiera que este.",
+    description: "Garantiza que su información sea única y exclusiva para que sus productos lleguen seguros a cualquier destino.",
     icon: (
-      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
+      <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
       </svg>
     ),
   },
 ];
-
 
 const mapStateToProps = (state) => ({
  
