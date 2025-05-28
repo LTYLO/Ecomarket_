@@ -84,7 +84,7 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
     // Solo mostrar "Vender" si está logueado
     if (isLoggedIn) {
       baseItems.push({ to: "/vender", label: "Vender" });
-      baseItems.push({ to: "/mis_Compras", label: "Mis compras" });
+      baseItems.push({ to: "/mis_Compras", label: "Usuario" });
     }
 
     // Solo mostrar "Crear cuenta" si NO está logueado

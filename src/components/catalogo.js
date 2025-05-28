@@ -27,14 +27,11 @@ const Catalogo = () => {
 
     const timeout = setTimeout(() => {
       if (!isDeleting && currentText === currentWord) {
-        // Pausa antes de empezar a borrar
         setTimeout(() => setIsDeleting(true), 1000);
       } else if (isDeleting && currentText === '') {
-        // Cambiar a la siguiente palabra
         setIsDeleting(false);
         setCurrentWordIndex((prev) => (prev + 1) % words.length);
       } else {
-        // Escribir o borrar caracteres
         setCurrentText(prev =>
           isDeleting
             ? prev.slice(0, -1)
@@ -57,8 +54,6 @@ const Catalogo = () => {
     axios.get(url)
       .then(res => {
         console.log('Datos del servidor:', res.data);
-        console.log('Estructura del primer producto:', res.data[0]);
-        console.log('Campo image del primer producto:', res.data[0]?.image);
         setProducts(res.data);
         setLoading(false);
       })
@@ -66,7 +61,6 @@ const Catalogo = () => {
         console.error('Error al obtener productos:', err);
         setLoading(false);
         
-        // Verificar si es un error de conexión con el servidor
         if (err.code === 'ECONNREFUSED' || 
             err.code === 'ERR_NETWORK' || 
             err.message.includes('Network Error') ||
@@ -74,16 +68,16 @@ const Catalogo = () => {
           console.log('Error de conexión detectado, redirigiendo...');
           setServerError(true);
           
-          // Redireccionar después de 3 segundos para mostrar el mensaje de error
           setTimeout(() => {
-            navigate('/error/500'); // Cambia esta ruta por la que necesites
+            navigate('/error/500');
           }, 3000);
         }
       });
   }, [search, navigate]);
 
   const handleAddToCart = (product, event) => {
-    event.stopPropagation(); // Evitar que se abra el modal
+    event.stopPropagation();
+    
     // Animación de éxito
     const button = document.getElementById(`btn-${product.id}`);
     if (button) {
@@ -93,33 +87,127 @@ const Catalogo = () => {
       }, 600);
     }
 
-    dispatch({
-      type: 'ADD_TO_CART',
-      payload: {
-        id: product.id,
-        title: product.title,
-        price: Number(product.price),
-      },
-    });
+    // Estructura de datos consistente y completa para el carrito
+    const cartItem = {
+      // IDs y datos básicos
+      id: product.id,
+      productId: product.id, // ID alternativo para mayor compatibilidad
+      
+      // Información del producto
+      title: product.title,
+      name: product.title, // Alias para compatibilidad
+      
+      // Precio siempre como número
+      price: parseFloat(product.price) || 0,
+      
+      // Imagen con fallback
+      image: product.image || 'http://localhost:8000/media/product_images/banano.jpg',
+      
+      // Cantidad inicial
+      quantity: 1,
+      
+      // Datos adicionales
+      description: product.description || '',
+      origin: product.origin || 'Nacional',
+      
+      // Metadatos para el carrito
+      addedAt: new Date().toISOString(),
+      
+      // Datos nutricionales opcionales
+      calories: product.calories,
+      vitamin_c: product.vitamin_c,
+      fiber: product.fiber,
+      potassium: product.potassium
+    };
+
+    // Dispatch a Redux con validación
+    try {
+      dispatch({
+        type: 'ADD_TO_CART',
+        payload: cartItem,
+      });
+      
+      // Feedback visual mejorado
+      showSuccessMessage(`"${product.title}" agregado al carrito`);
+      
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error);
+      showErrorMessage('Error al agregar el producto al carrito');
+    }
+  };
+
+  // Función para mostrar mensajes de éxito
+  const showSuccessMessage = (message) => {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+    notification.textContent = message;
+    notification.style.transform = 'translateY(-100px)';
+    
+    document.body.appendChild(notification);
+    
+    // Animar entrada
+    setTimeout(() => {
+      notification.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+      notification.style.transform = 'translateY(-100px)';
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 990);
+  };
+
+  // Función para mostrar mensajes de error
+  const showErrorMessage = (message) => {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+    notification.textContent = message;
+    notification.style.transform = 'translateY(-100px)';
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.transform = 'translateY(0)';
+    }, 10);
+    
+    setTimeout(() => {
+      notification.style.transform = 'translateY(-100px)';
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
   };
 
   const openModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
-    document.body.style.overflow = 'hidden'; // Bloquear scroll del body
+    document.body.style.overflow = 'hidden';
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedProduct(null);
-    document.body.style.overflow = 'unset'; // Restaurar scroll del body
+    document.body.style.overflow = 'unset';
   };
 
-  // Pantalla de error de servidor
+  // Limpiar overflow al desmontar componente
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   if (serverError) {
     return (
-     setTimeout(() => {
-            navigate('/error/500'); // Cambia esta ruta por la que necesites
+       setTimeout(() => {
+            navigate('/error/500');
           }, 1)
     );
   }
@@ -137,7 +225,6 @@ const Catalogo = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      {/* Contenido principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Título */}
         <div className="text-center mb-12">
@@ -168,7 +255,6 @@ const Catalogo = () => {
                   style={{ animationDelay: `${index * 100}ms` }}
                   onClick={() => openModal(product)}
                 >
-                  {/* Imagen del producto */}
                   <div className="relative overflow-hidden">
                     <img
                       src={product.image}
@@ -176,17 +262,12 @@ const Catalogo = () => {
                       className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
                         console.log('Error cargando imagen:', product.image);
-                        console.log('Product data:', product);
                         e.target.src = 'http://localhost:8000/media/product_images/banano.jpg';
-                      }}
-                      onLoad={() => {
-                        console.log('Imagen cargada exitosamente:', product.image);
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
 
-                  {/* Contenido del producto */}
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors duration-300">
                       {product.title}
@@ -231,7 +312,6 @@ const Catalogo = () => {
       {isModalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300 scale-100">
-            {/* Header del modal */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-3xl">
               <h2 className="text-2xl font-bold text-gray-800">Detalles del Producto</h2>
               <button
@@ -242,10 +322,8 @@ const Catalogo = () => {
               </button>
             </div>
 
-            {/* Contenido del modal */}
             <div className="p-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Imagen del producto */}
                 <div className="space-y-4">
                   <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
                     <img
@@ -258,7 +336,6 @@ const Catalogo = () => {
                     />
                   </div>
 
-                  {/* Imágenes adicionales (usando la misma imagen principal como placeholder) */}
                   <div className="grid grid-cols-4 gap-2">
                     {[1, 2, 3, 4].map((i) => (
                       <div key={i} className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-transparent hover:border-green-500 cursor-pointer transition-all duration-200">
@@ -275,7 +352,6 @@ const Catalogo = () => {
                   </div>
                 </div>
 
-                {/* Información del producto */}
                 <div className="space-y-6">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">{selectedProduct.title}</h1>
@@ -306,7 +382,6 @@ const Catalogo = () => {
                     </p>
                   </div>
 
-                  {/* Información adicional */}
                   <div className="bg-gray-50 rounded-xl p-4">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
@@ -328,7 +403,6 @@ const Catalogo = () => {
                     </div>
                   </div>
 
-                  {/* Detalles del Producto */}
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Origen:</span>
@@ -350,7 +424,6 @@ const Catalogo = () => {
                 </div>
               </div>
 
-              {/* Botones de acción */}
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={(e) => {
