@@ -3,6 +3,7 @@ import Headers from "components/Header";
 import Incentiv from "components/incentive";
 import Insentivo from "components/twincentive";
 import Carru from "components/carrusel";
+import EducacionSos from "components/informacionesp";
 
 function Home() {
   return (
@@ -12,8 +13,9 @@ function Home() {
         <Layout>
           <Headers/>
           <Carru/>
-          <Incentiv/>
           <Insentivo/>
+          <Incentiv/>
+          <EducacionSos/>
         </Layout>
       </div>
 

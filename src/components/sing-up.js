@@ -179,7 +179,7 @@ const UsuarioForm = ({ usuarioId, onSuccess }) => {
           
           {/* Header del formulario */}
           <div className="bg-gradient-to-r from-green-600 to-green-700 px-6 py-6 animate-slideRight">
-            <h2 className="text-2xl font-bold text-center text-white animate-typewriter">
+            <h2 className="text-2xl font-bold text-center text-white ">
               {usuarioId ? 'Editar Cuenta' : 'Crear Cuenta'}
             </h2>
           </div>
