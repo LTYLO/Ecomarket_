@@ -5,7 +5,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("Invitado");
-
+  const [userEmail, setUserEmail] = useState("");
   // Función para verificar el estado de autenticación
   const checkAuthStatus = () => {
     const token = localStorage.getItem('authToken');
@@ -26,12 +26,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Función para hacer login
-  const login = (token, name) => {
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userName', name);
-    setIsLoggedIn(true);
-    setUserName(name);
-  };
+  const login = (token, name, email) => {
+  localStorage.setItem('authToken', token);
+  localStorage.setItem('userName', name);
+  localStorage.setItem('userEmail', email); // Agregar esta línea
+  setIsLoggedIn(true);
+  setUserName(name);
+  setUserEmail(email); // Agregar esta línea
+};
 
   // Función para hacer logout
   const logout = () => {
@@ -48,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{
       isLoggedIn,
       userName,
+      userEmail,
       login,
       logout,
       checkAuthStatus

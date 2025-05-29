@@ -12,6 +12,7 @@ const LoginForm = () => {
   const [mensaje, setMensaje] = useState('');
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
+  const [userEmail, setUserEmail] = useState(''); // Para guardar el email del usuario
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,7 +48,9 @@ const LoginForm = () => {
           console.warn('Error al obtener datos del usuario:', userError);
         }
 
-        login(data.access, finalUserName);
+        
+        setUserEmail(email);
+        login(data.access, finalUserName, email); // Guardar el email para verificar si es admin
         setMensaje('Sesión iniciada correctamente');
 
         setTimeout(() => {
@@ -81,11 +84,19 @@ const LoginForm = () => {
 
   const handleLogout = () => {
     logout();
+    setUserEmail(''); // Limpiar el email al cerrar sesión
     setMensaje('Sesión cerrada');
     setTimeout(() => {
       navigate('/Home');
     }, 1000);
   };
+
+  const handleAdminAccess = () => {
+    navigate('/admin-panel');
+  };
+
+  // Verificar si el usuario es administrador
+  const isAdmin = isLoggedIn && userEmail === 'x@gmail.com';
 
   if (serverError) {
     return (
