@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Facebook, 
   Instagram, 
@@ -15,43 +15,16 @@ import {
 function Footer() {
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isInView, setIsInView] = useState(false);
-  const footerRef = useRef(null);
 
   useEffect(() => {
+    setIsVisible(true);
+    
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
     };
     
-    // Intersection Observer para detectar cuando el footer está visible
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          setIsVisible(true);
-        } else {
-          setIsInView(false);
-          setIsVisible(false);
-        }
-      },
-      {
-        threshold: 0.05, // Se activa cuando el 5% del footer es visible
-        rootMargin: '0px 0px -20px 0px' // Margen para que se active más suavemente
-      }
-    );
-
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
-    }
-    
     window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (footerRef.current) {
-        observer.unobserve(footerRef.current);
-      }
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToTop = () => {
@@ -59,40 +32,21 @@ function Footer() {
   };
 
   return (
-    <footer 
-      ref={footerRef}
-      className={`relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-300 overflow-hidden transform transition-all duration-[2500ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        isInView 
-          ? 'translate-y-0 opacity-100' 
-          : 'translate-y-full opacity-0'
-      }`}
-    >
+    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-300 overflow-hidden">
       {/* Elementos decorativos de fondo */}
-      <div className={`absolute inset-0 opacity-5 transition-all duration-[2500ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        isInView 
-          ? 'scale-100 opacity-5 delay-500' 
-          : 'scale-110 opacity-0'
-      }`}>
+      <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-40 h-40 bg-purple-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-green-500 rounded-full blur-2xl animate-pulse delay-500"></div>
       </div>
 
-      <div className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 transform transition-all duration-[2000ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        isInView 
-          ? 'translate-y-0 opacity-100 delay-700' 
-          : 'translate-y-6 opacity-0'
-      }`}>
+      <div className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
         
         {/* Contenido principal del footer */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           
           {/* Logo y descripción */}
-          <div className={`lg:col-span-1 transform hover:scale-105 transition-all duration-700 ${
-            isInView 
-              ? 'translate-x-0 opacity-100 delay-1000' 
-              : '-translate-x-8 opacity-0'
-          }`}>
+          <div className="lg:col-span-1 transform hover:scale-105 transition-transform duration-300">
             <div className="flex items-center mb-6 group">
               <div className="relative p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
@@ -127,11 +81,7 @@ function Footer() {
           </div>
 
           {/* Enlaces útiles */}
-          <div className={`transform hover:translate-y-1 transition-all duration-700 ${
-            isInView 
-              ? 'translate-y-0 opacity-100 delay-1200' 
-              : 'translate-y-8 opacity-0'
-          }`}>
+          <div className="transform hover:translate-y-1 transition-transform duration-300">
             <h3 className="text-lg font-semibold text-white mb-6 relative">
               Enlaces
               <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-blue-500 to-transparent"></div>
@@ -152,11 +102,7 @@ function Footer() {
           </div>
 
           {/* Recursos */}
-          <div className={`transform hover:translate-y-1 transition-all duration-700 ${
-            isInView 
-              ? 'translate-y-0 opacity-100 delay-1400' 
-              : 'translate-y-8 opacity-0'
-          }`}>
+          <div className="transform hover:translate-y-1 transition-transform duration-300">
             <h3 className="text-lg font-semibold text-white mb-6 relative">
               Recursos
               <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-purple-500 to-transparent"></div>
@@ -177,11 +123,7 @@ function Footer() {
           </div>
 
           {/* Redes Sociales y Newsletter */}
-          <div className={`transform hover:translate-y-1 transition-all duration-700 ${
-            isInView 
-              ? 'translate-x-0 opacity-100 delay-1600' 
-              : 'translate-x-8 opacity-0'
-          }`}>
+          <div className="transform hover:translate-y-1 transition-transform duration-300">
             <h3 className="text-lg font-semibold text-white mb-6 relative">
               Conéctate
               <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-green-500 to-transparent"></div>
@@ -226,18 +168,10 @@ function Footer() {
         </div>
 
         {/* Separador con gradiente */}
-        <div className={`my-12 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent transition-all duration-[1800ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isInView 
-            ? 'scale-x-100 opacity-100 delay-1800' 
-            : 'scale-x-0 opacity-0'
-        }`}></div>
+        <div className="my-12 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
 
         {/* Footer inferior */}
-        <div className={`flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 transition-all duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isInView 
-            ? 'translate-y-0 opacity-100 delay-2000' 
-            : 'translate-y-4 opacity-0'
-        }`}>
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-gray-500 flex items-center">
             <span className="mr-2">© 2024 EcoMarket.</span>
             <span className="hidden sm:inline">Todos los derechos reservados.</span>
