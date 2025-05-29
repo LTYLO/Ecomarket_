@@ -94,7 +94,7 @@ function Carru() {
                     <img 
                       src={carr1} 
                       alt="Imagen 1" 
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
                   </div>
@@ -114,7 +114,7 @@ function Carru() {
                     <img 
                       src={carr2} 
                       alt="Imagen 2" 
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
                   </div>
@@ -134,7 +134,7 @@ function Carru() {
                     <img 
                       src={carr3} 
                       alt="Imagen 3" 
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
                   </div>
@@ -154,7 +154,7 @@ function Carru() {
                     <img 
                       src={pap} 
                       alt="Imagen 4" 
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
                   </div>
@@ -174,7 +174,7 @@ function Carru() {
                     <img 
                       src={pop} 
                       alt="Imagen 5" 
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
                   </div>
@@ -194,7 +194,7 @@ function Carru() {
                     <img 
                       src={pop} 
                       alt="Imagen 6" 
-                      className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
                     />
                   </div>
