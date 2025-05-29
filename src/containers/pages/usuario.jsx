@@ -1,14 +1,14 @@
 import Footer from "components/footer";
 import Navbar from "components/Navbar";
 import Layout from "hocs/layout/layout";
-import UserProfileSection from "components/usuariomod"
+import UserProfile from "components/usuariomod"
 
-function Mis_Compras() {
+function Usuario() {
   return (
     <Layout>
-      <UserProfileSection/>
+      <UserProfile  />
     </Layout>
   );
 }
 
-export default Mis_Compras;
+export default Usuario;

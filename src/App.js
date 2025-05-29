@@ -9,13 +9,14 @@ import Footer from "components/footer";
 import Navbar from "components/Navbar";
 import Detalle from 'components/detalle';
 import AdminPanel from 'components/AdminPanel';
+import Pagar from 'containers/pages/Pagar';
 
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { Provider } from 'react-redux';
 
 import Catalogo from 'containers/pages/Catalogo';
 import Vender from 'containers/pages/Vender';
-import Mis_Compras from 'containers/pages/Mis_Compras';
+import Mis_Compras from 'containers/pages/usuario';
 import Sing_Up from 'containers/pages/Sing_Up';
 import Login from 'containers/pages/Login';
 import React, { useState } from 'react';
@@ -47,6 +48,8 @@ function App() {
             <Route path='/registrarse' element={<Sing_Up/>}/>
             <Route path='/login' element={<Login/>}/>
             <Route path="/admin-panel" element={<AdminPanel />} />
+             <Route path='/Pagar' element={<Pagar/>}/>
+            
             {/* Error pages */}
             <Route path="/error/500" element={<Error500 />} />
             <Route path="/error/500_login" element={<Error500_1 />} />
