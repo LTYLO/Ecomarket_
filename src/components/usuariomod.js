@@ -176,11 +176,6 @@ const UserProfile = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -240,10 +235,10 @@ const UserProfile = () => {
   // Mostrar loading mientras AuthContext verifica la autenticación
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center px-4">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
-          <p className="text-green-600">Verificando autenticación...</p>
+          <p className="text-green-600 text-center">Verificando autenticación...</p>
         </div>
       </div>
     );
@@ -252,10 +247,10 @@ const UserProfile = () => {
   // Mostrar loading mientras se cargan los datos del usuario
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center px-4">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
-          <p className="text-green-600">Cargando tu perfil...</p>
+          <p className="text-green-600 text-center">Cargando tu perfil...</p>
         </div>
       </div>
     );
@@ -264,26 +259,20 @@ const UserProfile = () => {
   // Mostrar error si existe
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center">
-        <div className="bg-white/70 backdrop-blur-md border border-red-200 rounded-3xl p-6 shadow-xl max-w-md mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center px-4">
+        <div className="bg-white/70 backdrop-blur-md border border-red-200 rounded-3xl p-6 shadow-xl max-w-md w-full mx-auto">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <X className="w-8 h-8 text-red-500" />
             </div>
             <h2 className="text-xl font-bold text-gray-800 mb-2">Error al cargar el perfil</h2>
-            <p className="text-red-600 mb-4">{error}</p>
+            <p className="text-red-600 mb-4 text-sm">{error}</p>
             <div className="space-y-2">
               <button 
                 onClick={fetchUserData}
                 className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-2xl font-medium hover:shadow-lg transition-all duration-300"
               >
                 Reintentar
-              </button>
-              <button 
-                onClick={handleLogout}
-                className="w-full bg-gray-500 text-white px-4 py-2 rounded-2xl font-medium hover:shadow-lg transition-all duration-300"
-              >
-                Cerrar Sesión
               </button>
             </div>
           </div>
@@ -293,58 +282,50 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-4 md:p-6 px-4 py-8 pt-24 mt-20">
-      <div className="max-w-4xl mx-auto">
-        {/* Header con efecto glassmorphism */}
-        <div className="relative mb-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-green-400 rounded-3xl opacity-10 blur-xl"></div>
-          <div className="relative bg-white/70 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-2 sm:p-4 md:p-6 pt-20 sm:pt-24 md:pt-28">
+      <div className="max-w-6xl mx-auto">
+        {/* Header con efecto glassmorphism - Responsivo */}
+        <div className="relative mb-6 md:mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-green-400 rounded-2xl md:rounded-3xl opacity-10 blur-xl"></div>
+          <div className="relative bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 sm:p-6 shadow-xl">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                 <div className="relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <User className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <User className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center cursor-pointer hover:bg-green-600 transition-colors">
                     <Camera className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Mi Perfil</h1>
-                  <p className="text-green-600 font-medium">Gestiona tu información personal</p>
+                <div className="text-center sm:text-left">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Mi Perfil</h1>
+                  <p className="text-green-600 font-medium text-sm md:text-base">Gestiona tu información personal</p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-row gap-2 w-full sm:w-auto">
                 {!isEditing ? (
-                  <>
-                    <button
-                      onClick={handleEdit}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      <span>Editar Perfil</span>
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center space-x-2 bg-red-500 text-white px-6 py-3 rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-                    >
-                      <X className="w-4 h-4" />
-                      <span>Cerrar Sesión</span>
-                    </button>
-                  </>
+                  <button
+                    onClick={handleEdit}
+                    className="flex items-center justify-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl md:rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm md:text-base flex-1 sm:flex-none"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                    <span className="hidden sm:inline">Editar Perfil</span>
+                    <span className="sm:hidden">Editar</span>
+                  </button>
                 ) : (
                   <>
                     <button
                       onClick={handleCancel}
-                      className="flex items-center space-x-2 bg-gray-500 text-white px-4 py-3 rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                      className="flex items-center justify-center space-x-2 bg-gray-500 text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl md:rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm md:text-base flex-1 sm:flex-none"
                     >
                       <X className="w-4 h-4" />
                       <span>Cancelar</span>
                     </button>
                     <button
                       onClick={handleSave}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-3 sm:px-4 py-2 sm:py-3 rounded-xl md:rounded-2xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm md:text-base flex-1 sm:flex-none"
                     >
                       <Save className="w-4 h-4" />
                       <span>Guardar</span>
@@ -356,23 +337,23 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Información del usuario */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Información del usuario - Layout Responsivo */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
           {/* Columna izquierda */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Información básica */}
-            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-3"></div>
                 Información Personal
               </h2>
               
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <div className="group">
                   <label className="block text-sm font-medium text-green-600 mb-2">ID de Usuario</label>
-                  <div className="flex items-center p-3 bg-green-50/50 rounded-2xl">
-                    <Shield className="w-5 h-5 text-green-500 mr-3" />
-                    <span className="text-gray-800 font-medium">
+                  <div className="flex items-center p-3 bg-green-50/50 rounded-xl md:rounded-2xl">
+                    <Shield className="w-4 h-4 md:w-5 md:h-5 text-green-500 mr-3 flex-shrink-0" />
+                    <span className="text-gray-800 font-medium text-sm md:text-base truncate">
                       {userData?.id || userData?.user_id || userData?.pk || 'No especificado'}
                     </span>
                   </div>
@@ -385,12 +366,13 @@ const UserProfile = () => {
                       type="text"
                       value={editData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-xl md:rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-sm md:text-base"
+                      placeholder="Ingresa tu nombre completo"
                     />
                   ) : (
-                    <div className="flex items-center p-3 bg-green-50/50 rounded-2xl group-hover:bg-green-50 transition-colors">
-                      <User className="w-5 h-5 text-green-500 mr-3" />
-                      <span className="text-gray-800 font-medium">
+                    <div className="flex items-center p-3 bg-green-50/50 rounded-xl md:rounded-2xl group-hover:bg-green-50 transition-colors">
+                      <User className="w-4 h-4 md:w-5 md:h-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-800 font-medium text-sm md:text-base truncate">
                         {userData?.nombre || userData?.name || userData?.first_name || 'No especificado'}
                       </span>
                     </div>
@@ -404,12 +386,13 @@ const UserProfile = () => {
                       type="email"
                       value={editData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-xl md:rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-sm md:text-base"
+                      placeholder="correo@ejemplo.com"
                     />
                   ) : (
-                    <div className="flex items-center p-3 bg-green-50/50 rounded-2xl group-hover:bg-green-50 transition-colors">
-                      <Mail className="w-5 h-5 text-green-500 mr-3" />
-                      <span className="text-gray-800">{userData?.email || 'No especificado'}</span>
+                    <div className="flex items-center p-3 bg-green-50/50 rounded-xl md:rounded-2xl group-hover:bg-green-50 transition-colors">
+                      <Mail className="w-4 h-4 md:w-5 md:h-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-800 text-sm md:text-base truncate">{userData?.email || 'No especificado'}</span>
                     </div>
                   )}
                 </div>
@@ -421,12 +404,13 @@ const UserProfile = () => {
                       type="tel"
                       value={editData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-xl md:rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-sm md:text-base"
+                      placeholder="+57 300 123 4567"
                     />
                   ) : (
-                    <div className="flex items-center p-3 bg-green-50/50 rounded-2xl group-hover:bg-green-50 transition-colors">
-                      <Phone className="w-5 h-5 text-green-500 mr-3" />
-                      <span className="text-gray-800">{userData?.telefono || userData?.phone || 'No especificado'}</span>
+                    <div className="flex items-center p-3 bg-green-50/50 rounded-xl md:rounded-2xl group-hover:bg-green-50 transition-colors">
+                      <Phone className="w-4 h-4 md:w-5 md:h-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-800 text-sm md:text-base">{userData?.telefono || userData?.phone || 'No especificado'}</span>
                     </div>
                   )}
                 </div>
@@ -434,13 +418,13 @@ const UserProfile = () => {
             </div>
 
             {/* Ubicación y datos adicionales */}
-            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-3"></div>
                 Ubicación y Datos
               </h2>
               
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <div className="group">
                   <label className="block text-sm font-medium text-green-600 mb-2">Dirección</label>
                   {isEditing ? (
@@ -448,29 +432,25 @@ const UserProfile = () => {
                       type="text"
                       value={editData.address}
                       onChange={(e) => handleInputChange('address', e.target.value)}
-                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/50 border border-green-200 rounded-xl md:rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-sm md:text-base"
+                      placeholder="Calle 123 #45-67, Ciudad"
                     />
                   ) : (
-                    <div className="flex items-center p-3 bg-green-50/50 rounded-2xl group-hover:bg-green-50 transition-colors">
-                      <MapPin className="w-5 h-5 text-green-500 mr-3" />
-                      <span className="text-gray-800">{userData?.direccion || userData?.address || 'No especificada'}</span>
+                    <div className="flex items-center p-3 bg-green-50/50 rounded-xl md:rounded-2xl group-hover:bg-green-50 transition-colors">
+                      <MapPin className="w-4 h-4 md:w-5 md:h-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-800 text-sm md:text-base">{userData?.direccion || userData?.address || 'No especificada'}</span>
                     </div>
                   )}
-                </div>
-
-                <div className="group">
-                  <div className="flex items-center p-0 bg-green-50/50 rounded-xl">
-                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Columna derecha */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Información motivacional */}
-            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-3"></div>
                 Crece con nosotros
               </h2>
@@ -479,43 +459,43 @@ const UserProfile = () => {
                 <img
                   src={anim}
                   alt="Animación representativa"
-                  className="rounded-lg shadow-lg w-full max-w-[570px] h-auto"
+                  className="rounded-lg md:rounded-xl shadow-lg w-full h-auto max-h-64 md:max-h-80 object-cover"
                 />
               </div>
             </div>
 
             {/* Estadísticas */}
-            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-3"></div>
                 Actividad de la Cuenta
               </h2>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl text-white">
-                  <div className="text-2xl font-bold">2.5k</div>
-                  <div className="text-green-100 text-sm">Interacciones</div>
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <div className="text-center p-3 md:p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-xl md:rounded-2xl text-white">
+                  <div className="text-xl md:text-2xl font-bold">2.5k</div>
+                  <div className="text-green-100 text-xs md:text-sm">Interacciones</div>
                 </div>
-                <div className="text-center p-4 bg-gradient-to-br from-green-400 to-green-500 rounded-2xl text-white">
-                  <div className="text-2xl font-bold">48</div>
-                  <div className="text-green-100 text-sm">Días Activo</div>
+                <div className="text-center p-3 md:p-4 bg-gradient-to-br from-green-400 to-green-500 rounded-xl md:rounded-2xl text-white">
+                  <div className="text-xl md:text-2xl font-bold">48</div>
+                  <div className="text-green-100 text-xs md:text-sm">Días Activo</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-
+        {/* Footer informativo */}
         {!isEditing && (
-          <div className="mt-8 bg-white/70 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-xl">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="text-center md:text-left mb-4 md:mb-0">
-                <p className="text-gray-600">Última actualización: {new Date().toLocaleDateString('es-ES')}</p>
-                <p className="text-sm text-green-600">Tu información está protegida y segura</p>
+          <div className="mt-6 md:mt-8 bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-xl">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-center md:text-left">
+                <p className="text-gray-600 text-sm md:text-base">Última actualización: {new Date().toLocaleDateString('es-ES')}</p>
+                <p className="text-xs md:text-sm text-green-600">Tu información está protegida y segura</p>
               </div>
               <div className="flex items-center space-x-2 text-green-600">
-                <Shield className="w-5 h-5" />
-                <span className="font-medium">Verificado</span>
+                <Shield className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="font-medium text-sm md:text-base">Verificado</span>
               </div>
             </div>
           </div>
