@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext'; // Asumiendo que tienes este hook
 
-const CheckoutPage = ({ items = [], onOrderComplete, showSuccessMessage, showErrorMessage }) => {
+const Pago = ({ items = [], onOrderComplete, showSuccessMessage, showErrorMessage }) => {
   const { authToken, isLoggedIn } = useAuth(); // Hook de autenticación
   
   // Estados para datos del usuario
@@ -518,4 +518,4 @@ const CheckoutPage = ({ items = [], onOrderComplete, showSuccessMessage, showErr
   );
 };
 
-export default CheckoutPage;
+export default Pago;
