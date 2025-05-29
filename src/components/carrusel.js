@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
-import carr1 from 'assets/img/videoframe_7878.png';
-import carr2 from 'assets/img/videoframe_13399.png';
-import carr3 from 'assets/img/videoframe_23609.png';
-import pap from 'assets/img/imagen_2.jpg'
-import pop from 'assets/img/animplanta.gif'
+import carr1 from 'assets/img/videoframe_4961.png';
+import carr2 from 'assets/img/videoframe_6004.png';
+import carr3 from 'assets/img/imagen_3.jpg';
+import pap from 'assets/img/imagen_4.jpg';
+import pop from 'assets/img/imagen_5.jpg';
+import pep from 'assets/img/videoframe_8837.png'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, A11y, Keyboard } from 'swiper/modules'
 import 'swiper/css';
@@ -192,7 +193,7 @@ function Carru() {
                 <div className="group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
                   <div className="aspect-w-16 aspect-h-10 overflow-hidden">
                     <img 
-                      src={pop} 
+                      src={pep} 
                       alt="Imagen 6" 
                       className="w-full h-116 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"

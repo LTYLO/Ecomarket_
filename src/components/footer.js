@@ -87,35 +87,19 @@ function Footer() {
               <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-blue-500 to-transparent"></div>
             </h3>
             <ul className="space-y-3">
-              {['Inicio', 'Sobre Nosotros', 'Servicios', 'Productos', 'Blog', 'Contacto'].map((item, index) => (
-                <li key={item} className={`transform transition-all duration-300 delay-${index * 100}`}>
+              {[
+                { label: 'Inicio', href: '/' },
+                { label: 'Productos', href: '/catalogo' },
+                { label: 'Iniciar Sesion', href: '/login' },
+                { label: 'Registro', href: '/registrarse' }
+              ].map((item, index) => (
+                <li key={item.label} className={`transform transition-all duration-300 delay-${index * 100}`}>
                   <a 
-                    href="#" 
+                    href={item.href} 
                     className="text-gray-400 hover:text-white hover:pl-2 transition-all duration-300 flex items-center group text-sm"
                   >
                     <span className="w-0 h-0.5 bg-blue-500 group-hover:w-4 transition-all duration-300 mr-0 group-hover:mr-2"></span>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Recursos */}
-          <div className="transform hover:translate-y-1 transition-transform duration-300">
-            <h3 className="text-lg font-semibold text-white mb-6 relative">
-              Recursos
-              <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-purple-500 to-transparent"></div>
-            </h3>
-            <ul className="space-y-3">
-              {['Centro de Ayuda', 'Documentación', 'API', 'Guías', 'Política de Privacidad', 'Términos de Servicio'].map((item, index) => (
-                <li key={item} className={`transform transition-all duration-300 delay-${index * 100}`}>
-                  <a 
-                    href="#" 
-                    className="text-gray-400 hover:text-white hover:pl-2 transition-all duration-300 flex items-center group text-sm"
-                  >
-                    <span className="w-0 h-0.5 bg-purple-500 group-hover:w-4 transition-all duration-300 mr-0 group-hover:mr-2"></span>
-                    {item}
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -129,33 +113,21 @@ function Footer() {
               <div className="absolute bottom-0 left-0 w-8 h-0.5 bg-gradient-to-r from-green-500 to-transparent"></div>
             </h3>
             
-            {/* Newsletter */}
-            <div className="mb-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 backdrop-blur-sm">
-              <p className="text-sm text-gray-400 mb-3">Suscríbete a nuestro newsletter</p>
-              <div className="flex">
-                <input 
-                  type="email" 
-                  placeholder="tu@email.com"
-                  className="flex-1 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-l-lg text-white text-sm focus:outline-none focus:border-blue-500 transition-colors duration-300"
-                />
-                <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-r-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 text-sm font-medium">
-                  Enviar
-                </button>
-              </div>
-            </div>
 
             {/* Redes sociales */}
             <div className="flex flex-wrap gap-3">
               {[
-                { icon: Facebook, color: 'hover:text-blue-500', label: 'Facebook' },
-                { icon: Instagram, color: 'hover:text-pink-500', label: 'Instagram' },
-                { icon: Twitter, color: 'hover:text-sky-400', label: 'Twitter' },
-                { icon: Github, color: 'hover:text-gray-300', label: 'GitHub' },
-                { icon: Youtube, color: 'hover:text-red-500', label: 'YouTube' }
-              ].map(({ icon: Icon, color, label }, index) => (
+                { icon: Facebook, color: 'hover:text-blue-500', label: 'Facebook', href: 'https://facebook.com/tuPerfil'},
+                { icon: Instagram, color: 'hover:text-pink-500', label: 'Instagram', href: 'https://instagram.com/tuPerfil' },
+                { icon: Twitter, color: 'hover:text-sky-400', label: 'Twitter', href: 'https://twitter.com/tuPerfil' },
+                { icon: Github, color: 'hover:text-gray-300', label: 'GitHub', href: 'https://github.com/LTYLO/Ecomarket_' },
+                { icon: Youtube, color: 'hover:text-red-500', label: 'YouTube', href: 'https://youtube.com/tuCanal'}
+              ].map(({ icon: Icon, color, label, href}, index) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`p-3 bg-slate-800/50 rounded-xl border border-slate-700/50 text-gray-400 ${color} transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm group`}
                   style={{ animationDelay: `${index * 100}ms` }}
                   title={label}
