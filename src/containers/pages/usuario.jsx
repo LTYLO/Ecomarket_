@@ -3,7 +3,7 @@ import Navbar from "components/Navbar";
 import Layout from "hocs/layout/layout";
 import UserProfileSection from "components/usuariomod"
 
-function Mis_Compras() {
+function Usuario() {
   return (
     <Layout>
       <UserProfileSection/>
@@ -11,4 +11,4 @@ function Mis_Compras() {
   );
 }
 
-export default Mis_Compras;
+export default Usuario;

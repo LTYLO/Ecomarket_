@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 
 import Catalogo from 'containers/pages/Catalogo';
 import Vender from 'containers/pages/Vender';
-import Mis_Compras from 'containers/pages/Mis_Compras';
+import Mis_Compras from 'containers/pages/usuario';
 import Sing_Up from 'containers/pages/Sing_Up';
 import Login from 'containers/pages/Login';
 import React, { useState } from 'react';
