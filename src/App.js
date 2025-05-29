@@ -8,6 +8,7 @@ import { AuthProvider } from 'components/AuthContext';
 import Footer from "components/footer";
 import Navbar from "components/Navbar";
 import Detalle from 'components/detalle';
+import Pagar from 'containers/pages/Pagar';
 
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { Provider } from 'react-redux';
@@ -45,6 +46,8 @@ function App() {
             <Route path='/mis_Compras' element={<Mis_Compras/>}/>
             <Route path='/registrarse' element={<Sing_Up/>}/>
             <Route path='/login' element={<Login/>}/>
+             <Route path='/Pagar' element={<Pagar/>}/>
+            
             {/* Error pages */}
             <Route path="/error/500" element={<Error500 />} />
             <Route path="/error/500_login" element={<Error500_1 />} />
