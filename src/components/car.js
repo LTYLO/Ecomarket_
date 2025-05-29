@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useDispatch } from 'react-redux';
+import { useAuth } from './AuthContext';
 
 const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
   const dispatch = useDispatch();
+  const { isLoggedIn, userName, checkAuthStatus } = useAuth();
 
   // Funciones helper para manejar datos del producto
   const getProductName = (item) => {
@@ -41,10 +43,9 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
     try {
       dispatch({
         type: 'REMOVE_FROM_CART',
-        payload: productId // Enviamos el ID del producto en lugar del índice
+        payload: productId
       });
       
-      // Mostrar mensaje de éxito
       showSuccessMessage('Producto eliminado del carrito');
       
     } catch (error) {
@@ -78,41 +79,80 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
     }
   };
 
-  // Funciones para mostrar notificaciones (copiadas del componente Catalogo)
-  const showSuccessMessage = (message) => {
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300';
-    notification.textContent = message;
-    notification.style.transform = 'translateY(-100px)';
+ 
+  const handleCheckout = async () => {
+    console.log('🚀 handleCheckout ejecutado');
     
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-      notification.style.transform = 'translateY(0)';
-    }, 10);
-    
-    setTimeout(() => {
-      notification.style.transform = 'translateY(-100px)';
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 300);
-    }, 990);
+    try {
+      // Verificar estado actual de autenticación
+      await checkAuthStatus();
+      
+      // Obtener datos actualizados después de la verificación
+      const token = localStorage.getItem('authToken');
+      const storedUserName = localStorage.getItem('userName');
+      
+      console.log('🔍 Estado de autenticación:', {
+        isLoggedIn,
+        userName,
+        hasToken: Boolean(token),
+        storedUserName
+      });
+      
+      
+      if (token) {
+        console.log('Usuario autenticado, redirigiendo a página de pago');
+        showSuccessMessage(`Redirigiendo al pago!`);
+        
+        // Redirigir después del mensaje
+        setTimeout(() => {
+          window.location.href = '/pagar';
+        }, 1000);
+        
+      } else {
+        console.log(' Usuario no autenticado');
+        showWarningMessage('Por favor inicia sesión para continuar con tu compra');
+        
+        // Opcional: redirigir al login
+        setTimeout(() => {
+          const loginPath = '/login';
+          console.log(' Redirigiendo al login...');
+          // Descomenta si quieres redirección automática
+          // window.location.href = loginPath;
+        }, 2500);
+      }
+    } catch (error) {
+      console.error(' Error en handleCheckout:', error);
+      showErrorMessage('Error al procesar la compra');
+    }
   };
 
-  const showErrorMessage = (message) => {
+  // ✅ FUNCIONES DE NOTIFICACIÓN MEJORADAS
+  const showNotification = (message, type = 'success') => {
+    const colors = {
+      success: 'bg-green-500',
+      error: 'bg-red-500',
+      warning: 'bg-yellow-500'
+    };
+    
+    const durations = {
+      success: 2000,
+      error: 3000,
+      warning: 2500
+    };
+
     const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+    notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300`;
     notification.textContent = message;
     notification.style.transform = 'translateY(-100px)';
     
     document.body.appendChild(notification);
     
-    setTimeout(() => {
+    // Animación de entrada
+    requestAnimationFrame(() => {
       notification.style.transform = 'translateY(0)';
-    }, 10);
+    });
     
+    // Remover después del tiempo especificado
     setTimeout(() => {
       notification.style.transform = 'translateY(-100px)';
       setTimeout(() => {
@@ -120,13 +160,19 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
           document.body.removeChild(notification);
         }
       }, 300);
-    }, 3000);
+    }, durations[type]);
   };
+
+  const showSuccessMessage = (message) => showNotification(message, 'success');
+  const showErrorMessage = (message) => showNotification(message, 'error');
+  const showWarningMessage = (message) => showNotification(message, 'warning');
 
   // Log para debugging
   console.log('🛒 CartPanel render:', {
     showCart,
     cartItemsCount: cartItems.length,
+    isLoggedIn,
+    userName,
     cartItems: cartItems.map(item => ({
       id: item.id,
       name: getProductName(item),
@@ -169,6 +215,27 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
             </svg>
           </button>
         </div>
+
+        {/* Indicador de estado de autenticación */}
+        {cartItems.length > 0 && (
+          <div className={`px-4 py-2 text-xs border-b ${isLoggedIn ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}`}>
+            {isLoggedIn ? (
+              <div className="flex items-center space-x-1">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Conectado como {userName}</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span>Inicia sesión para finalizar tu compra</span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Contenido del carrito */}
         {cartItems.length === 0 ? (
@@ -234,7 +301,7 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                console.log('➖ Click decrementar para producto ID:', item.id);
+                                console.log(' Click decrementar para producto ID:', item.id);
                                 updateQuantity(item.id, quantity - 1);
                               }}
                               className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 text-sm transition-colors"
@@ -249,7 +316,7 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                console.log('➕ Click incrementar para producto ID:', item.id);
+                                console.log(' Click incrementar para producto ID:', item.id);
                                 updateQuantity(item.id, quantity + 1);
                               }}
                               className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 text-sm transition-colors"
@@ -269,7 +336,7 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          console.log('🗑️ Click eliminar para producto ID:', item.id);
+                          console.log(' Click eliminar para producto ID:', item.id);
                           handleRemoveItem(item.id);
                         }}
                         className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors flex-shrink-0"
@@ -308,14 +375,19 @@ const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
                 </div>
               </div>
               
-              {/* Botones de acción */}
+              {/*  BOTÓN CORREGIDO */}
               <div className="space-y-2">
                 <button 
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-md transition-colors"
+                  onClick={handleCheckout}
+                  className={`w-full font-medium py-3 rounded-md transition-colors ${
+                    isLoggedIn 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                  }`}
                   disabled={cartItems.length === 0}
                   type="button"
                 >
-                  Finalizar Compra
+                  {isLoggedIn ? 'Finalizar Compra' : 'Iniciar Sesión para Comprar'}
                 </button>
                 <button 
                   onClick={() => setShowCart(false)}
