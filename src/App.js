@@ -10,6 +10,7 @@ import Navbar from "components/Navbar";
 import Detalle from 'components/detalle';
 import AdminPanel from 'components/AdminPanel';
 import CheckoutPanel from 'components/CheckoutPanel';
+import Resena from 'components/resena';
 
 
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
@@ -50,6 +51,7 @@ function App() {
             <Route path='/login' element={<Login/>}/>
             <Route path="/admin-panel" element={<AdminPanel />} />
            <Route path='/panel' element={<CheckoutPanel/>} />
+           <Route path='/resena' element={<Resena/>} />
 
             
             {/* Error pages */}

@@ -656,7 +656,7 @@ const CheckoutPanel = ({ cartItems = [] }) => {
         </button>
         
         <button 
-          onClick={() => navigate('/resena')}
+          onClick={() => navigate('/Resena')}
           style={{
             padding: '15px 35px',
             backgroundColor: '#FF9800',
