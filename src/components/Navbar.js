@@ -52,11 +52,8 @@ function Navbar({ cartItems, setCartItems, removeFromCart }) {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (isOpen && !e.target.closest('.mobile-menu-container')) {
-        setIsOpen(false);
-      }
-      if (showMobileSearch && !e.target.closest('.mobile-search-container')) {
-        setShowMobileSearch(false);
-      }
+      setIsOpen(false);
+    }
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);

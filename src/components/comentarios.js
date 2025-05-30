@@ -73,7 +73,7 @@ const Comentarios = () => {
         {/* Título de la sección */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            Lo que dicen nuestros participantes
+            Lo que dicen nuestros clientes
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Conoce las experiencias de quienes forman parte de nuestra comunidad sostenible
