@@ -39,7 +39,6 @@ const AdminPanel = () => {
     try {
       const response = await fetch('http://localhost:8000/api/products/', {
         headers: {
-          'Authorization': `Bearer ${getToken()}`,
           'Content-Type': 'application/json',
         },
       });
