@@ -4,7 +4,7 @@ import Incentiv from "components/incentive";
 import Insentivo from "components/twincentive";
 import Carru from "components/carrusel";
 import EducacionSos from "components/informacionesp";
-
+import Comentarios from "components/comentarios";
 function Home() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -16,6 +16,7 @@ function Home() {
           <Insentivo/>
           <Incentiv/>
           <EducacionSos/>
+          <Comentarios/>
         </Layout>
       </div>
 

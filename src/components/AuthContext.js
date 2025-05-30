@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("Invitado");
+  
   const [isLoading, setIsLoading] = useState(true); // NUEVO: Estado de carga
   const [userEmail, setUserEmail] = useState("");
   // Función para verificar el estado de autenticación
