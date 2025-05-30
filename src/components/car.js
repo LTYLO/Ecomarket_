@@ -1,186 +1,225 @@
-  import React from 'react';
-  import { connect } from 'react-redux';
-  import { useDispatch } from 'react-redux';
-  import { useAuth } from './AuthContext';
+import React from 'react';
+import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useAuth } from './AuthContext';
 
-  const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
-    const dispatch = useDispatch();
-    const { isLoggedIn, userName, checkAuthStatus } = useAuth();
+const CartPanel = ({ showCart, setShowCart, cartItems = [] }) => {
+  const dispatch = useDispatch();
+  const { isLoggedIn, userName, checkAuthStatus } = useAuth();
 
-    // Funciones helper para manejar datos del producto
-    const getProductName = (item) => {
-      return item.title || item.name || item.nombre || 'Producto sin nombre';
-    };
+  // Funciones helper para manejar datos del producto
+  const getProductName = (item) => {
+    return item.title || item.name || item.nombre || 'Producto sin nombre';
+  };
 
-    const getProductPrice = (item) => {
-      return Number(item.price || item.precio || 0);
-    };
+  const getProductPrice = (item) => {
+    return Number(item.price || item.precio || 0);
+  };
 
-    const getProductImage = (item) => {
-      return item.image || item.imagen || null;
-    };
+  const getProductImage = (item) => {
+    return item.image || item.imagen || null;
+  };
 
-    const getItemTotal = (item) => {
-      const price = getProductPrice(item);
-      const quantity = Number(item.quantity || 1);
-      return price * quantity;
-    };
+  const getItemTotal = (item) => {
+    const price = getProductPrice(item);
+    const quantity = Number(item.quantity || 1);
+    return price * quantity;
+  };
 
-    const getTotalItems = () => {
-      return cartItems.reduce((acc, item) => acc + Number(item.quantity || 1), 0);
-    };
+  const getTotalItems = () => {
+    return cartItems.reduce((acc, item) => acc + Number(item.quantity || 1), 0);
+  };
 
-    // Calcular subtotal con validación
-    const subtotal = cartItems.reduce((acc, item) => {
-      const price = getProductPrice(item);
-      const quantity = Number(item.quantity || 1);
-      return acc + (price * quantity);
-    }, 0);
+  // Calcular subtotal con validación
+  const subtotal = cartItems.reduce((acc, item) => {
+    const price = getProductPrice(item);
+    const quantity = Number(item.quantity || 1);
+    return acc + (price * quantity);
+  }, 0);
 
-    const handleRemoveItem = (productId) => {
-      console.log('🗑️ Eliminando producto con ID:', productId);
-      
-      try {
-        dispatch({
-          type: 'REMOVE_FROM_CART',
-          payload: productId
-        });
-        
-        showSuccessMessage('Producto eliminado del carrito');
-        
-      } catch (error) {
-        console.error('❌ Error eliminando producto:', error);
-        showErrorMessage('Error al eliminar el producto');
-      }
-    };
-
-    const updateQuantity = (productId, newQuantity) => {
-      console.log('🔢 Actualizando cantidad para producto ID:', productId, 'nueva cantidad:', newQuantity);
-      
-      const quantity = Number(newQuantity);
-      
-      if (quantity < 1) {
-        handleRemoveItem(productId);
-        return;
-      }
-
-      try {
-        dispatch({
-          type: 'UPDATE_CART_QUANTITY',
-          payload: { 
-            productId, 
-            quantity 
-          }
-        });
-        
-      } catch (error) {
-        console.error('❌ Error actualizando cantidad:', error);
-        showErrorMessage('Error al actualizar la cantidad');
-      }
-    };
-
-  
-    const handleCheckout = async () => {
-      console.log('🚀 handleCheckout ejecutado');
-      
-      try {
-        // Verificar estado actual de autenticación
-        await checkAuthStatus();
-        
-        // Obtener datos actualizados después de la verificación
-        const token = localStorage.getItem('authToken');
-        const storedUserName = localStorage.getItem('userName');
-        
-        console.log('🔍 Estado de autenticación:', {
-          isLoggedIn,
-          userName,
-          hasToken: Boolean(token),
-          storedUserName
-        });
-        
-        
-        if (token) {
-          console.log('Usuario autenticado, redirigiendo a página de pago');
-          showSuccessMessage(`Redirigiendo al pago!`);
-          
-          // Redirigir después del mensaje
-          setTimeout(() => {
-            window.location.href = '/pagar';
-          }, 1000);
-          
-        } else {
-          console.log(' Usuario no autenticado');
-          showWarningMessage('Por favor inicia sesión para continuar con tu compra');
-          
-          // Opcional: redirigir al login
-          setTimeout(() => {
-            const loginPath = '/login';
-            console.log(' Redirigiendo al login...');
-            // Descomenta si quieres redirección automática
-            // window.location.href = loginPath;
-          }, 2500);
-        }
-      } catch (error) {
-        console.error(' Error en handleCheckout:', error);
-        showErrorMessage('Error al procesar la compra');
-      }
-    };
-
-    // ✅ FUNCIONES DE NOTIFICACIÓN MEJORADAS
-    const showNotification = (message, type = 'success') => {
-      const colors = {
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        warning: 'bg-yellow-500'
-      };
-      
-      const durations = {
-        success: 2000,
-        error: 3000,
-        warning: 2500
-      };
-
-      const notification = document.createElement('div');
-      notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300`;
-      notification.textContent = message;
-      notification.style.transform = 'translateY(-100px)';
-      
-      document.body.appendChild(notification);
-      
-      // Animación de entrada
-      requestAnimationFrame(() => {
-        notification.style.transform = 'translateY(0)';
+  const handleRemoveItem = (productId) => {
+    console.log('🗑️ Eliminando producto con ID:', productId);
+    
+    try {
+      dispatch({
+        type: 'REMOVE_FROM_CART',
+        payload: productId
       });
       
-      // Remover después del tiempo especificado
-      setTimeout(() => {
-        notification.style.transform = 'translateY(-100px)';
+      // Actualizar localStorage también
+      const updatedItems = cartItems.filter(item => item.id !== productId);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      
+      showSuccessMessage('Producto eliminado del carrito');
+      
+    } catch (error) {
+      console.error('❌ Error eliminando producto:', error);
+      showErrorMessage('Error al eliminar el producto');
+    }
+  };
+
+  const updateQuantity = (productId, newQuantity) => {
+    console.log('🔢 Actualizando cantidad para producto ID:', productId, 'nueva cantidad:', newQuantity);
+    
+    const quantity = Number(newQuantity);
+    
+    if (quantity < 1) {
+      handleRemoveItem(productId);
+      return;
+    }
+
+    try {
+      dispatch({
+        type: 'UPDATE_CART_QUANTITY',
+        payload: { 
+          productId, 
+          quantity 
+        }
+      });
+      
+      // Actualizar localStorage también
+      const updatedItems = cartItems.map(item => 
+        item.id === productId ? { ...item, quantity } : item
+      );
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      
+    } catch (error) {
+      console.error('❌ Error actualizando cantidad:', error);
+      showErrorMessage('Error al actualizar la cantidad');
+    }
+  };
+
+  // Función para guardar datos del carrito antes del checkout
+  const saveCartDataForCheckout = () => {
+    try {
+      console.log('💾 Guardando datos del carrito para checkout...');
+      
+      // Guardar en localStorage
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      
+      // Guardar también en sessionStorage como respaldo
+      sessionStorage.setItem('checkoutItems', JSON.stringify(cartItems));
+      
+      console.log('✅ Datos guardados correctamente:', cartItems.length, 'items');
+      
+    } catch (error) {
+      console.error('❌ Error guardando datos del carrito:', error);
+    }
+  };
+
+  const handleCheckout = async () => {
+    console.log('🚀 handleCheckout ejecutado');
+    
+    try {
+      // Verificar que hay items en el carrito
+      if (!cartItems || cartItems.length === 0) {
+        showWarningMessage('Tu carrito está vacío');
+        return;
+      }
+      
+      // Guardar datos del carrito antes de proceder
+      saveCartDataForCheckout();
+      
+      // Verificar estado actual de autenticación
+      await checkAuthStatus();
+      
+      // Obtener datos actualizados después de la verificación
+      const token = localStorage.getItem('authToken');
+      const storedUserName = localStorage.getItem('userName');
+      
+      console.log('🔍 Estado de autenticación:', {
+        isLoggedIn,
+        userName,
+        hasToken: Boolean(token),
+        storedUserName,
+        cartItemsCount: cartItems.length
+      });
+      
+      if (token) {
+        console.log('✅ Usuario autenticado, redirigiendo a página de pago');
+        showSuccessMessage(`Redirigiendo al pago con ${cartItems.length} productos!`);
+        
+        // Cerrar el carrito antes de redirigir
+        setShowCart(false);
+        
+        // Redirigir después del mensaje
         setTimeout(() => {
-          if (document.body.contains(notification)) {
-            document.body.removeChild(notification);
-          }
-        }, 300);
-      }, durations[type]);
+          window.location.href = '/panel';
+        }, 1000);
+        
+      } else {
+        console.log('⚠️ Usuario no autenticado');
+        showWarningMessage('Por favor inicia sesión para continuar con tu compra');
+        
+        // Opcional: redirigir al login
+        setTimeout(() => {
+          const loginPath = '/login';
+          console.log('🔄 Redirigiendo al login...');
+          // Descomenta si quieres redirección automática
+          // window.location.href = loginPath;
+        }, 2500);
+      }
+    } catch (error) {
+      console.error('❌ Error en handleCheckout:', error);
+      showErrorMessage('Error al procesar la compra');
+    }
+  };
+
+  // ✅ FUNCIONES DE NOTIFICACIÓN MEJORADAS
+  const showNotification = (message, type = 'success') => {
+    const colors = {
+      success: 'bg-green-500',
+      error: 'bg-red-500',
+      warning: 'bg-yellow-500'
+    };
+    
+    const durations = {
+      success: 2000,
+      error: 3000,
+      warning: 2500
     };
 
-    const showSuccessMessage = (message) => showNotification(message, 'success');
-    const showErrorMessage = (message) => showNotification(message, 'error');
-    const showWarningMessage = (message) => showNotification(message, 'warning');
-
-    // Log para debugging
-    console.log('🛒 CartPanel render:', {
-      showCart,
-      cartItemsCount: cartItems.length,
-      isLoggedIn,
-      userName,
-      cartItems: cartItems.map(item => ({
-        id: item.id,
-        name: getProductName(item),
-        quantity: item.quantity
-      }))
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300`;
+    notification.textContent = message;
+    notification.style.transform = 'translateY(-100px)';
+    
+    document.body.appendChild(notification);
+    
+    // Animación de entrada
+    requestAnimationFrame(() => {
+      notification.style.transform = 'translateY(0)';
     });
+    
+    // Remover después del tiempo especificado
+    setTimeout(() => {
+      notification.style.transform = 'translateY(-100px)';
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, durations[type]);
+  };
 
-    if (!showCart) return null;
+  const showSuccessMessage = (message) => showNotification(message, 'success');
+  const showErrorMessage = (message) => showNotification(message, 'error');
+  const showWarningMessage = (message) => showNotification(message, 'warning');
+
+  // Log para debugging
+  console.log('🛒 CartPanel render:', {
+    showCart,
+    cartItemsCount: cartItems.length,
+    isLoggedIn,
+    userName,
+    cartItems: cartItems?.map(item => ({
+      id: item.id,
+      name: getProductName(item),
+      quantity: item.quantity
+    })) || []
+  });
+
+  if (!showCart) return null;
 
     return (
       <>

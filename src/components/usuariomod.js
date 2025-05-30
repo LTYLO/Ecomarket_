@@ -421,7 +421,7 @@ const UserProfile = () => {
             <div className="bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
               <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <div className="w-2 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full mr-3"></div>
-                Ubicación y Datos
+                Ubicación 
               </h2>
               
               <div className="space-y-3 md:space-y-4">

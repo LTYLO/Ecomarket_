@@ -9,7 +9,8 @@ import Footer from "components/footer";
 import Navbar from "components/Navbar";
 import Detalle from 'components/detalle';
 import AdminPanel from 'components/AdminPanel';
-import Pagar from 'containers/pages/Pagar';
+import CheckoutPanel from 'components/CheckoutPanel';
+
 
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { Provider } from 'react-redux';
@@ -48,7 +49,8 @@ function App() {
             <Route path='/registrarse' element={<Sing_Up/>}/>
             <Route path='/login' element={<Login/>}/>
             <Route path="/admin-panel" element={<AdminPanel />} />
-             <Route path='/Pagar' element={<Pagar/>}/>
+           <Route path='/panel' element={<CheckoutPanel/>} />
+
             
             {/* Error pages */}
             <Route path="/error/500" element={<Error500 />} />
